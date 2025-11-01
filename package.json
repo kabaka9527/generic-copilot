@@ -5,12 +5,12 @@
 	"description": "An extension that integrates Openai Compatible Inference Providers into GitHub Copilot Chat",
 	"icon": "assets/logo.png",
 	"keywords": [
-        "ai",
-        "chat",
-        "copilot",
-        "github-copilot",
-        "language-model"
-    ],
+		"ai",
+		"chat",
+		"copilot",
+		"github-copilot",
+		"language-model"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/mcowger/generic-copilot-providers"
@@ -20,18 +20,18 @@
 		"vscode": "^1.105.0"
 	},
 	"extensionDependencies": [
-        "github.copilot-chat"
-    ],
+		"github.copilot-chat"
+	],
 	"categories": [
 		"AI",
 		"Chat"
 	],
 	"license": "MIT",
 	"enabledApiProposals": [
-        "chatProvider",
+		"chatProvider",
 		"languageModelCapabilities",
 		"languageModelThinkingPart"
-    ],
+	],
 	"contributes": {
 		"languageModelChatProviders": [
 			{
@@ -396,27 +396,29 @@
 	},
 	"main": "./out/extension.js",
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
+		"prepublish": "npm run compile",
 		"download-api": "npx dts dev && mv vscode.proposed.*.ts src",
 		"compile": "tsc -p ./",
 		"lint": "eslint",
 		"format": "prettier --write .",
 		"watch": "tsc -watch -p ./",
-		"test": "npm run compile && vscode-test"
+		"test": "npm run compile && vscode-test",
+		"package": "vsce package --out generic-copilot-providers.vsix"
 	},
 	"dependencies": {},
 	"devDependencies": {
-		"@eslint/js": "^9.13.0",
-		"@stylistic/eslint-plugin": "^2.9.0",
-		"@types/node": "^22",
-		"@types/mocha": "^10.0.6",
+		"@eslint/js": "^9.39.0",
+		"@vscode/vsce": "^3.6.2",
+		"@stylistic/eslint-plugin": "^5.5.0",
+		"@types/mocha": "^10.0.10",
+		"@types/node": "^24",
+		"@types/vscode": "^1.105.0",
 		"@vscode/dts": "^0.4.1",
-		"@types/vscode": "^1.104.0",
-		"@vscode/test-cli": "^0.0.11",
+		"@vscode/test-cli": "^0.0.12",
 		"@vscode/test-electron": "^2.5.2",
-		"eslint": "^9.13.0",
-		"prettier": "^3.1.0",
-		"typescript": "^5.9.2",
-		"typescript-eslint": "^8.39.0"
+		"eslint": "^9.39.0",
+		"prettier": "^3.6.2",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.46.2"
 	}
 }
