@@ -9,7 +9,7 @@ import { CancellationToken, LanguageModelChatInformation, LanguageModelChatReque
  * @returns A promise that resolves to the number of tokens
  */
 export async function prepareTokenCount(
-	model: LanguageModelChatInformation,
+	_model: LanguageModelChatInformation,
 	text: string | LanguageModelChatRequestMessage,
 	_token: CancellationToken
 ): Promise<number> {
