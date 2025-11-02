@@ -450,6 +450,20 @@ Add fixed delay between consecutive requests:
 
 ## 💡 Tips & Best Practices
 
+### Use family and model names carefully.  Copilot changes behavior based on these names:
+
+#### Model Name variations
+* gpt-5-codex | gpt-5-codex : uses Codex-style prompt branch
+* gpt-5* | gpt-5 : can use apply_patch exclusively; agent prompts differ for gpt-5
+* o4-mini | o4-mini : allowed apply_patch and prefers JSON notebook representation
+c* laude-3.5-sonnet | claude-3.5-sonnet : prefers instructions in user message and after history
+
+#### Family Name variations
+* GPT family | gpt (excl. gpt-4o) : supports apply_patch, prefers JSON notebook representation
+* Claude / Anthropic | claude / Anthropic : supports multi_replace/replace_string, can use replace_string exclusively, MCP image_url disallowed
+* Gemini | gemini : supports replace_string, healing/strong-replace hints required, cannot accept image_url in requests
+* Grok | grok-code : supports replace_string and can use replace_string exclusively
+
 ### Organize by Provider
 
 Group models by provider to make configuration easier to manage and reduce duplication.
