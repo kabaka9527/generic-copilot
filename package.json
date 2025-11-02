@@ -49,11 +49,6 @@
 		"configuration": {
 			"title": "Generic Compatible Copilot",
 			"properties": {
-				"generic-copilot.baseUrl": {
-					"type": "string",
-					"default": "https://router.huggingface.co/v1",
-					"description": "The base URL for the OpenAI Compatible Inference API. Default value is Hugging Face."
-				},
 				"generic-copilot.providers": {
 					"type": "array",
 					"default": [],
