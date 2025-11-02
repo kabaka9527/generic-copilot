@@ -511,9 +511,7 @@ export async function executeWithRetry<T>(
  * @returns Resolved model configuration with inherited values
  */
 export function resolveModelWithProvider(model: ModelItem): ModelItem {
-	// Get the provider reference from either grouped or flat structure
-	const props = getModelProperties(model);
-	const providerRef = props.provider;
+	const providerRef = model.model_properties.provider;
 
 	// If no provider reference, return model as-is
 	if (!providerRef) {
@@ -531,41 +529,44 @@ export function resolveModelWithProvider(model: ModelItem): ModelItem {
 		return model;
 	}
 
-	// Create resolved model by merging provider defaults with model config
-	const resolved: ModelItem = {
-		...model,
-		// Inherit owned_by from provider key (for flat structure)
-		owned_by: provider.key,
-		// Inherit baseUrl from provider if not explicitly set (for flat structure)
-		baseUrl: props.baseUrl || provider.baseUrl,
-	};
-
-	// If using grouped structure, update model_properties
-	if (model.model_properties) {
-		resolved.model_properties = {
-			...model.model_properties,
-			owned_by: provider.key,
-			baseUrl: props.baseUrl || provider.baseUrl,
-		};
-	}
-
 	// Helper to detect plain objects
 	const isPlainObject = (val: unknown): val is Record<string, unknown> =>
 		!!val && typeof val === "object" && !Array.isArray(val);
 
-	// Generic merge: apply provider.defaults into resolved without overwriting existing model values.
-	// If both values are plain objects, perform a shallow merge with model taking precedence.
+	// Create resolved model by merging provider defaults with model config
+	const resolved: ModelItem = {
+		model_properties: {
+			...model.model_properties,
+			owned_by: provider.key,
+			baseUrl: model.model_properties.baseUrl || provider.baseUrl,
+		},
+		model_parameters: { ...model.model_parameters },
+	};
+
+	// Merge provider defaults into resolved model
 	if (provider.defaults) {
-		for (const [key, defVal] of Object.entries(provider.defaults as Record<string, unknown>)) {
-			const curVal = (resolved as unknown as Record<string, unknown>)[key];
-			if (curVal === undefined) {
-				// Adopt default when model hasn't specified a value
-				(resolved as unknown as Record<string, unknown>)[key] = defVal;
-			} else if (isPlainObject(curVal) && isPlainObject(defVal)) {
-				// Shallow merge objects: defaults first, then model overrides
-				(resolved as unknown as Record<string, unknown>)[key] = { ...defVal, ...curVal };
+		// Merge model_properties defaults
+		if (provider.defaults.model_properties) {
+			for (const [key, defVal] of Object.entries(provider.defaults.model_properties)) {
+				const curVal = (resolved.model_properties as unknown as Record<string, unknown>)[key];
+				if (curVal === undefined) {
+					(resolved.model_properties as unknown as Record<string, unknown>)[key] = defVal;
+				} else if (isPlainObject(curVal) && isPlainObject(defVal)) {
+					(resolved.model_properties as unknown as Record<string, unknown>)[key] = { ...defVal, ...curVal };
+				}
 			}
-			// For non-object values that already exist, keep model's value
+		}
+
+		// Merge model_parameters defaults
+		if (provider.defaults.model_parameters) {
+			for (const [key, defVal] of Object.entries(provider.defaults.model_parameters)) {
+				const curVal = (resolved.model_parameters as unknown as Record<string, unknown>)[key];
+				if (curVal === undefined) {
+					(resolved.model_parameters as unknown as Record<string, unknown>)[key] = defVal;
+				} else if (isPlainObject(curVal) && isPlainObject(defVal)) {
+					(resolved.model_parameters as unknown as Record<string, unknown>)[key] = { ...defVal, ...curVal };
+				}
+			}
 		}
 	}
 
@@ -573,115 +574,19 @@ export function resolveModelWithProvider(model: ModelItem): ModelItem {
 }
 
 /**
- * Normalize a ModelItem by converting flat structure to grouped structure.
- * If the model already uses the grouped structure, it is returned as-is.
- * If it uses the flat structure, it is converted to grouped structure.
- * @param model The model configuration to normalize
- * @returns Normalized model with grouped structure
- */
-export function normalizeModelItem(model: ModelItem): ModelItem {
-	// If already using grouped structure, return as-is
-	if (model.model_properties || model.model_parameters) {
-		return model;
-	}
-
-	// Convert flat structure to grouped structure
-	const modelProperties: ModelProperties = {
-		id: model.id || '',
-		object: model.object,
-		created: model.created,
-		displayName: model.displayName,
-		owned_by: model.owned_by || '',
-		provider: model.provider,
-		configId: model.configId,
-		baseUrl: model.baseUrl,
-		providers: model.providers,
-		architecture: model.architecture,
-		context_length: model.context_length,
-		vision: model.vision,
-		family: model.family,
-		headers: model.headers,
-	};
-
-	const modelParameters: ModelParameters = {
-		temperature: model.temperature,
-		top_p: model.top_p,
-		max_tokens: model.max_tokens,
-		max_completion_tokens: model.max_completion_tokens,
-		reasoning_effort: model.reasoning_effort,
-		enable_thinking: model.enable_thinking,
-		thinking_budget: model.thinking_budget,
-		thinking: model.thinking,
-		top_k: model.top_k,
-		min_p: model.min_p,
-		frequency_penalty: model.frequency_penalty,
-		presence_penalty: model.presence_penalty,
-		repetition_penalty: model.repetition_penalty,
-		reasoning: model.reasoning,
-		extra: model.extra,
-	};
-
-	return {
-		model_properties: modelProperties,
-		model_parameters: modelParameters,
-	};
-}
-
-/**
- * Get model properties from a ModelItem, supporting both flat and grouped structures.
+ * Get model properties from a ModelItem.
  * @param model The model configuration
  * @returns Model properties
  */
 export function getModelProperties(model: ModelItem): ModelProperties {
-	if (model.model_properties) {
-		return model.model_properties;
-	}
-
-	// Extract from flat structure
-	return {
-		id: model.id || '',
-		object: model.object,
-		created: model.created,
-		displayName: model.displayName,
-		owned_by: model.owned_by || '',
-		provider: model.provider,
-		configId: model.configId,
-		baseUrl: model.baseUrl,
-		providers: model.providers,
-		architecture: model.architecture,
-		context_length: model.context_length,
-		vision: model.vision,
-		family: model.family,
-		headers: model.headers,
-	};
+	return model.model_properties;
 }
 
 /**
- * Get model parameters from a ModelItem, supporting both flat and grouped structures.
+ * Get model parameters from a ModelItem.
  * @param model The model configuration
  * @returns Model parameters
  */
 export function getModelParameters(model: ModelItem): ModelParameters {
-	if (model.model_parameters) {
-		return model.model_parameters;
-	}
-
-	// Extract from flat structure
-	return {
-		temperature: model.temperature,
-		top_p: model.top_p,
-		max_tokens: model.max_tokens,
-		max_completion_tokens: model.max_completion_tokens,
-		reasoning_effort: model.reasoning_effort,
-		enable_thinking: model.enable_thinking,
-		thinking_budget: model.thinking_budget,
-		thinking: model.thinking,
-		top_k: model.top_k,
-		min_p: model.min_p,
-		frequency_penalty: model.frequency_penalty,
-		presence_penalty: model.presence_penalty,
-		repetition_penalty: model.repetition_penalty,
-		reasoning: model.reasoning,
-		extra: model.extra,
-	};
+	return model.model_parameters;
 }

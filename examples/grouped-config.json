@@ -1,6 +1,6 @@
 {
   "_comment1": "Grouped Configuration Example",
-  "_comment2": "This example demonstrates the new grouped structure with model_properties and model_parameters",
+  "_comment2": "This example demonstrates the grouped structure with model_properties and model_parameters",
   "_comment3": "This provides clearer separation between what's sent to the API (model_parameters) and internal metadata (model_properties)",
 
   "generic-copilot.providers": [
@@ -88,14 +88,6 @@
           "another_param": 123
         }
       }
-    },
-    {
-      "_comment": "Legacy flat structure - still supported for backward compatibility",
-      "id": "deepseek-v3",
-      "provider": "modelscope",
-      "owned_by": "modelscope",
-      "temperature": 0.5,
-      "max_tokens": 16384
     }
   ]
 }

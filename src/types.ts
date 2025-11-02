@@ -122,44 +122,13 @@ export interface ModelProperties {
 }
 
 /**
- * Combined model configuration interface
- * Supports both flat (legacy) and grouped (new) structures
+ * Model configuration interface using grouped structure
+ * Properties and parameters are separated for clarity
  */
 export interface ModelItem {
-	// New grouped structure
-	model_properties?: ModelProperties;
-	model_parameters?: ModelParameters;
-
-	// Legacy flat structure (for backward compatibility)
-	id?: string;
-	object?: string;
-	created?: number;
-	displayName?: string;
-	owned_by?: string;
-	provider?: string;
-	configId?: string;
-	baseUrl?: string;
-	providers?: Provider[];
-	architecture?: Architecture;
-	context_length?: number;
-	vision?: boolean;
-	max_tokens?: number;
-	max_completion_tokens?: number;
-	reasoning_effort?: string;
-	enable_thinking?: boolean;
-	thinking_budget?: number;
-	thinking?: ThinkingConfig;
-	temperature?: number | null;
-	top_p?: number | null;
-	top_k?: number;
-	min_p?: number;
-	frequency_penalty?: number;
-	presence_penalty?: number;
-	repetition_penalty?: number;
-	reasoning?: ReasoningConfig;
-	family?: string;
-	extra?: Record<string, unknown>;
-	headers?: Record<string, string>;
+	// Grouped structure - required
+	model_properties: ModelProperties;
+	model_parameters: ModelParameters;
 }
 
 /**
@@ -249,30 +218,9 @@ export interface ProviderConfig {
 	baseUrl: string;
 	/** Custom HTTP headers for all requests */
 	headers?: Record<string, string>;
-	/** Default parameters that models can inherit - supports both grouped and flat structures */
+	/** Default parameters that models can inherit - grouped structure only */
 	defaults?: {
-		// New grouped structure
 		model_properties?: Partial<ModelProperties>;
 		model_parameters?: Partial<ModelParameters>;
-
-		// Legacy flat structure (for backward compatibility)
-		context_length?: number;
-		max_tokens?: number;
-		max_completion_tokens?: number;
-		temperature?: number | null;
-		top_p?: number | null;
-		top_k?: number;
-		min_p?: number;
-		frequency_penalty?: number;
-		presence_penalty?: number;
-		repetition_penalty?: number;
-		vision?: boolean;
-		family?: string;
-		reasoning_effort?: string;
-		enable_thinking?: boolean;
-		thinking_budget?: number;
-		thinking?: ThinkingConfig;
-		reasoning?: ReasoningConfig;
-		extra?: Record<string, unknown>;
 	};
 }

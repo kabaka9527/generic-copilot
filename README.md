@@ -229,16 +229,15 @@ Models reference providers and automatically inherit their settings. You can ove
 }
 ```
 
-### Grouped Structure (New)
+### Grouped Structure
 
-The extension now supports a grouped structure that clearly separates parameters sent to the API (`model_parameters`) from internal metadata (`model_properties`). This provides better organization and clarity about what data is sent to the model provider.
+The extension uses a grouped structure that clearly separates parameters sent to the API (`model_parameters`) from internal metadata (`model_properties`). This provides better organization and clarity about what data is sent to the model provider.
 
 #### Why Use Grouped Structure?
 
 - **Clear Separation**: Easily see which settings are sent to the API vs. used internally
 - **Better Organization**: Group related settings together
 - **Unknown Keys**: The `model_parameters.extra` field allows unknown keys for provider-specific parameters
-- **Backward Compatible**: The flat structure is still fully supported
 
 #### Grouped Model Schema
 
@@ -476,7 +475,7 @@ Configure display of model reasoning:
 
 When making requests to the model provider:
 
-1. **Model ID Mapping**: The `id` from `model_properties` (or flat structure) is sent as the `model` parameter in the API request
+1. **Model ID Mapping**: The `id` from `model_properties` is sent as the `model` parameter in the API request
 2. **Parameters Only**: Only `model_parameters` (temperature, max_tokens, etc.) are included in the request body
 3. **Excluded Metadata**: `model_properties` like `baseUrl`, `context_length`, `vision`, and `family` are NOT sent to the API - they're used internally by the extension
 4. **Unknown Keys**: Custom parameters can be added via `model_parameters.extra` and will be passed through to the API
