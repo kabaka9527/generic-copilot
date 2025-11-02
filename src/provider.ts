@@ -202,11 +202,17 @@ export class HuggingFaceChatModelProvider implements LanguageModelChatProvider {
 			// Find the matching user model configuration
 			// Prefer match: same model id AND same configId AND (if present) same provider key
 			let um: ModelItem | undefined = userModels.find((m) => {
-				if (m.id !== baseIdForMatch) return false;
+				if (m.id !== baseIdForMatch) {
+					return false;
+				}
 				const configMatch = (parsedModelId.configId && m.configId === parsedModelId.configId) ||
 					(!parsedModelId.configId && !m.configId);
-				if (!configMatch) return false;
-				if (!providerHint) return true;
+				if (!configMatch) {
+					return false;
+				}
+				if (!providerHint) {
+					return true;
+				}
 				const decl = getDeclaredProviderKey(m);
 				return decl ? decl === providerHint : false;
 			});
@@ -860,9 +866,9 @@ export class HuggingFaceChatModelProvider implements LanguageModelChatProvider {
 			// We are inside a think block, look for end tag
 			const endIdx = data.indexOf(THINK_END);
 			if (endIdx === -1) {
-				// No end tag found, emit current chunk content as thinking part
-				const thinkContent = data.trim();
-				if (thinkContent) {
+				// No end tag found, emit current chunk content as thinking part (preserve whitespace)
+				const thinkContent = data;
+				if (thinkContent.length > 0) {
 					progress.report(new vscode.LanguageModelThinkingPart(thinkContent, this._currentThinkingId || undefined));
 					emittedAny = true;
 				}
