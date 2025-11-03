@@ -1,6 +1,15 @@
 import React from 'react';
 import type { ProviderConfig, ModelProperties, ModelParameters } from '../../../src/types';
 import { prettyJson, tryParseJson, parseFloatOrUndef, parseIntOrUndef } from '../utils';
+import {
+  VscodeTextfield,
+  VscodeTextarea,
+  VscodeCheckbox,
+  VscodeButton,
+  VscodeDivider,
+  VscodeFormGroup,
+  VscodeFormHelper,
+} from '@vscode-elements/react-elements';
 
 export interface ProvidersProps {
   providers: ProviderConfig[];
@@ -83,117 +92,130 @@ const ProviderItem: React.FC<{
       <div className="item-header">
         <h3>Provider {index + 1}</h3>
         <div className="item-actions">
-          <button className="secondary" onClick={onRemove}>Remove</button>
+          <VscodeButton onClick={onRemove} secondary>
+            Remove
+          </VscodeButton>
         </div>
       </div>
 
-      <div className="form-group">
-        <label>Key (required) *</label>
-        <input
+      <VscodeFormGroup>
+        <VscodeTextfield
           type="text"
-          value={provider.key ?? ''}
+          value={(provider.key as unknown as string) ?? ''}
           placeholder="e.g., openai, anthropic"
-          onChange={(e) => updateField('key', e.target.value)}
-        />
-        <div className="error" style={{ display: provider.key ? 'none' : 'block' }}>Key is required</div>
-      </div>
+          onInput={(e: any) => updateField('key', e.currentTarget.value)}
+        >
+          <span slot="label">Key (required) *</span>
+        </VscodeTextfield>
+        <VscodeFormHelper style={{ color: 'var(--vscode-errorForeground)', display: provider.key ? 'none' : 'block' }}>
+          Key is required
+        </VscodeFormHelper>
+      </VscodeFormGroup>
 
-      <div className="form-group">
-        <label>Display Name</label>
-        <input
+      <VscodeFormGroup>
+        <VscodeTextfield
           type="text"
-          value={provider.displayName ?? ''}
-          onChange={(e) => updateField('displayName', e.target.value)}
-        />
-      </div>
+          value={(provider.displayName as unknown as string) ?? ''}
+          onInput={(e: any) => updateField('displayName', e.currentTarget.value)}
+        >
+          <span slot="label">Display Name</span>
+        </VscodeTextfield>
+      </VscodeFormGroup>
 
-      <div className="form-group">
-        <label>Base URL (required) *</label>
-        <input
+      <VscodeFormGroup>
+        <VscodeTextfield
           type="text"
-          value={provider.baseUrl ?? ''}
+          value={(provider.baseUrl as unknown as string) ?? ''}
           placeholder="e.g., https://api.openai.com/v1"
-          onChange={(e) => updateField('baseUrl', e.target.value)}
-        />
-        <div className="error" style={{ display: provider.baseUrl ? 'none' : 'block' }}>Base URL is required</div>
-      </div>
+          onInput={(e: any) => updateField('baseUrl', e.currentTarget.value)}
+        >
+          <span slot="label">Base URL (required) *</span>
+        </VscodeTextfield>
+        <VscodeFormHelper style={{ color: 'var(--vscode-errorForeground)', display: provider.baseUrl ? 'none' : 'block' }}>
+          Base URL is required
+        </VscodeFormHelper>
+      </VscodeFormGroup>
 
-      <div className="form-group">
-        <label>Headers (JSON)</label>
-        <textarea
-          rows={3}
+      <VscodeFormGroup>
+        <VscodeTextarea
+          rows={3 as any}
           placeholder='{"X-Custom-Header":"value"}'
           value={prettyJson(provider.headers)}
-          onChange={(e) => updateHeaders(e.target.value)}
-        />
-      </div>
+          onInput={(e: any) => updateHeaders(e.currentTarget.value)}
+        >
+          <span slot="label">Headers (JSON)</span>
+        </VscodeTextarea>
+        <VscodeFormHelper>Custom headers for this provider (JSON object)</VscodeFormHelper>
+      </VscodeFormGroup>
 
-      <div className="form-group">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={!!provider.defaults}
-            onChange={(e) => toggleDefaults(e.target.checked)}
-          />
+      <VscodeFormGroup>
+        <VscodeCheckbox
+          checked={!!provider.defaults}
+          onInput={(e: any) => toggleDefaults((e.currentTarget as any).checked)}
+        >
           Configure Default Parameters
-        </label>
-      </div>
+        </VscodeCheckbox>
+      </VscodeFormGroup>
 
       {provider.defaults && (
         <div className="collapsible-content">
-          <div className="form-group">
-            <label>Context Length</label>
-            <input
+          <VscodeDivider></VscodeDivider>
+          <VscodeFormGroup>
+            <VscodeTextfield
               type="number"
-              value={propDefaults.context_length ?? ''}
-              onChange={(e) => updateDefault('model_properties', 'context_length', parseIntOrUndef(e.target.value))}
-            />
-          </div>
-          <div className="form-group">
-            <label>Max Tokens</label>
-            <input
+              value={(propDefaults.context_length as unknown as string) ?? ''}
+              onInput={(e: any) => updateDefault('model_properties', 'context_length', parseIntOrUndef(e.currentTarget.value))}
+            >
+              <span slot="label">Context Length</span>
+            </VscodeTextfield>
+          </VscodeFormGroup>
+          <VscodeFormGroup>
+            <VscodeTextfield
               type="number"
-              value={paramDefaults.max_tokens ?? ''}
-              onChange={(e) => updateDefault('model_parameters', 'max_tokens', parseIntOrUndef(e.target.value))}
-            />
-          </div>
-          <div className="form-group">
-            <label>Temperature (0-2)</label>
-            <input
-              type="number"
-              step={0.1}
-              value={paramDefaults.temperature ?? ''}
-              onChange={(e) => updateDefault('model_parameters', 'temperature', parseFloatOrUndef(e.target.value) ?? '')}
-            />
-          </div>
-          <div className="form-group">
-            <label>Top P (0-1)</label>
-            <input
+              value={(paramDefaults.max_tokens as unknown as string) ?? ''}
+              onInput={(e: any) => updateDefault('model_parameters', 'max_tokens', parseIntOrUndef(e.currentTarget.value))}
+            >
+              <span slot="label">Max Tokens</span>
+            </VscodeTextfield>
+          </VscodeFormGroup>
+          <VscodeFormGroup>
+            <VscodeTextfield
               type="number"
               step={0.1}
-              value={paramDefaults.top_p ?? ''}
-              onChange={(e) => updateDefault('model_parameters', 'top_p', parseFloatOrUndef(e.target.value) ?? '')}
-            />
-          </div>
-          <div className="form-group">
-            <label>Family</label>
-            <input
+              value={(paramDefaults.temperature as unknown as string) ?? ''}
+              onInput={(e: any) => updateDefault('model_parameters', 'temperature', parseFloatOrUndef(e.currentTarget.value) ?? '')}
+            >
+              <span slot="label">Temperature (0-2)</span>
+            </VscodeTextfield>
+          </VscodeFormGroup>
+          <VscodeFormGroup>
+            <VscodeTextfield
+              type="number"
+              step={0.1}
+              value={(paramDefaults.top_p as unknown as string) ?? ''}
+              onInput={(e: any) => updateDefault('model_parameters', 'top_p', parseFloatOrUndef(e.currentTarget.value) ?? '')}
+            >
+              <span slot="label">Top P (0-1)</span>
+            </VscodeTextfield>
+          </VscodeFormGroup>
+          <VscodeFormGroup>
+            <VscodeTextfield
               type="text"
               placeholder="e.g., gpt-4, claude-3, gemini"
-              value={propDefaults.family ?? ''}
-              onChange={(e) => updateDefault('model_properties', 'family', e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={!!propDefaults.vision}
-                onChange={(e) => updateDefault('model_properties', 'vision', e.target.checked)}
-              />
+              value={(propDefaults.family as unknown as string) ?? ''}
+              onInput={(e: any) => updateDefault('model_properties', 'family', e.currentTarget.value)}
+            >
+              <span slot="label">Family</span>
+            </VscodeTextfield>
+          </VscodeFormGroup>
+          <VscodeFormGroup>
+            <VscodeCheckbox
+              checked={!!propDefaults.vision}
+              onInput={(e: any) => updateDefault('model_properties', 'vision', (e.currentTarget as any).checked)}
+            >
               Vision Support
-            </label>
-          </div>
+            </VscodeCheckbox>
+          </VscodeFormGroup>
         </div>
       )}
     </div>
@@ -221,7 +243,9 @@ export const Providers: React.FC<ProvidersProps> = ({ providers, onChange }) => 
   if (!providers || providers.length === 0) {
     return (
       <div>
-        <button className="add-button" onClick={addProvider}>+ Add Provider</button>
+        <VscodeButton onClick={addProvider} secondary>
+          + Add Provider
+        </VscodeButton>
         <div className="empty-state">No providers configured. Click "Add Provider" to get started.</div>
       </div>
     );
@@ -229,7 +253,9 @@ export const Providers: React.FC<ProvidersProps> = ({ providers, onChange }) => 
 
   return (
     <div>
-      <button className="add-button" onClick={addProvider}>+ Add Provider</button>
+      <VscodeButton onClick={addProvider} secondary>
+        + Add Provider
+      </VscodeButton>
       <div className="item-list">
         {providers.map((p, i) => (
           <ProviderItem

@@ -3,6 +3,13 @@ import React from 'react';
 import type { ModelItem, ProviderConfig, ModelProperties, ModelParameters } from '../../../src/types';
 import ModelPropertiesForm from './ModelProperties';
 import ModelParamsForm from './ModelParams';
+import {
+    VscodeButton,
+    VscodeDivider,
+    VscodeTabs,
+    VscodeTabHeader,
+    VscodeTabPanel,
+} from '@vscode-elements/react-elements';
 
 export interface ModelsProps {
     providers: ProviderConfig[];
@@ -64,12 +71,22 @@ const ModelItemCard: React.FC<{
             <div className="item-header">
                 <h3>Model {index + 1}</h3>
                 <div className="item-actions">
-                    <button className="secondary" onClick={onRemove}>Remove</button>
+                    <VscodeButton onClick={onRemove} secondary>
+                        Remove
+                    </VscodeButton>
                 </div>
             </div>
 
-            <ModelPropertiesForm value={value.model_properties} providers={providers} onChange={updateProps} />
-            <ModelParamsForm value={value.model_parameters} onChange={updateParams} />
+            <VscodeTabs>
+                <VscodeTabHeader slot="header">Properties</VscodeTabHeader>
+                <VscodeTabHeader slot="header">Parameters</VscodeTabHeader>
+                <VscodeTabPanel>
+                    <ModelPropertiesForm value={value.model_properties} providers={providers} onChange={updateProps} />
+                </VscodeTabPanel>
+                <VscodeTabPanel>
+                    <ModelParamsForm value={value.model_parameters} onChange={updateParams} />
+                </VscodeTabPanel>
+            </VscodeTabs>
         </div>
     );
 };
@@ -95,7 +112,7 @@ export const Models: React.FC<ModelsProps> = ({ providers, models, onChange }) =
     if (!models || models.length === 0) {
         return (
             <div>
-                <button className="add-button" onClick={addModel}>+ Add Model</button>
+                <VscodeButton onClick={addModel}>+ Add Model</VscodeButton>
                 <div className="empty-state">No models configured. Click "Add Model" to get started.</div>
             </div>
         );
@@ -103,7 +120,9 @@ export const Models: React.FC<ModelsProps> = ({ providers, models, onChange }) =
 
     return (
         <div>
-            <button className="add-button" onClick={addModel}>+ Add Model</button>
+            <VscodeButton onClick={addModel} secondary>
+                + Add Model
+            </VscodeButton>
             <div className="item-list">
                 {models.map((m, i) => (
                     <ModelItemCard

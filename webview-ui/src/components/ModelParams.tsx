@@ -2,6 +2,14 @@
 import React from 'react';
 import type { ModelParameters } from '../../../src/types';
 import { tryParseJson, prettyJson, parseFloatOrNull, parseFloatOrUndef, parseIntOrUndef } from '../utils';
+import {
+    VscodeTextfield,
+    VscodeTextarea,
+    VscodeCheckbox,
+    VscodeDivider,
+    VscodeFormGroup,
+    VscodeFormHelper,
+} from '@vscode-elements/react-elements';
 
 export interface ModelParamsProps {
     value: ModelParameters;
@@ -32,152 +40,170 @@ const ModelParamsForm: React.FC<ModelParamsProps> = ({ value, onChange }) => {
                 </em>
             </div>
 
-            <div className="form-group">
-                <label>Max Tokens</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
-                    value={value?.max_tokens ?? ''}
-                    onChange={(e) => update('max_tokens', parseIntOrUndef(e.target.value))}
-                />
-            </div>
+                    value={(value?.max_tokens as unknown as string) ?? ''}
+                    onInput={(e: any) => update('max_tokens', parseIntOrUndef(e.currentTarget.value))}
+                >
+                    <span slot="label">Max Tokens</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Max Completion Tokens</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
-                    value={value?.max_completion_tokens ?? ''}
-                    onChange={(e) => update('max_completion_tokens', parseIntOrUndef(e.target.value))}
-                />
-            </div>
+                    value={(value?.max_completion_tokens as unknown as string) ?? ''}
+                    onInput={(e: any) => update('max_completion_tokens', parseIntOrUndef(e.currentTarget.value))}
+                >
+                    <span slot="label">Max Completion Tokens</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Temperature (0-2)</label>
-                <input
-                    type="number"
-                    step={0.1}
-                    value={value?.temperature ?? ''}
-                    onChange={(e) => update('temperature', parseFloatOrNull(e.target.value))}
-                />
-            </div>
-
-            <div className="form-group">
-                <label>Top P (0-1)</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
                     step={0.1}
-                    value={value?.top_p ?? ''}
-                    onChange={(e) => update('top_p', parseFloatOrNull(e.target.value))}
-                />
-            </div>
+                    value={(value?.temperature as unknown as string) ?? ''}
+                    onInput={(e: any) => update('temperature', parseFloatOrNull(e.currentTarget.value))}
+                >
+                    <span slot="label">Temperature (0-2)</span>
+                </VscodeTextfield>
+                <VscodeFormHelper>Range 0–2. Set null to omit from request.</VscodeFormHelper>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Top K</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
-                    value={value?.top_k ?? ''}
-                    onChange={(e) => update('top_k', parseIntOrUndef(e.target.value))}
-                />
-            </div>
+                    step={0.1}
+                    value={(value?.top_p as unknown as string) ?? ''}
+                    onInput={(e: any) => update('top_p', parseFloatOrNull(e.currentTarget.value))}
+                >
+                    <span slot="label">Top P (0-1)</span>
+                </VscodeTextfield>
+                <VscodeFormHelper>Range 0–1. Set null to omit from request.</VscodeFormHelper>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Min P</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
+                    type="number"
+                    value={(value?.top_k as unknown as string) ?? ''}
+                    onInput={(e: any) => update('top_k', parseIntOrUndef(e.currentTarget.value))}
+                >
+                    <span slot="label">Top K</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
+
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
                     step={0.01}
-                    value={value?.min_p ?? ''}
-                    onChange={(e) => update('min_p', parseFloatOrUndef(e.target.value))}
-                />
-            </div>
+                    value={(value?.min_p as unknown as string) ?? ''}
+                    onInput={(e: any) => update('min_p', parseFloatOrUndef(e.currentTarget.value))}
+                >
+                    <span slot="label">Min P</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Frequency Penalty</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
                     step={0.1}
-                    value={value?.frequency_penalty ?? ''}
-                    onChange={(e) => update('frequency_penalty', parseFloatOrUndef(e.target.value))}
-                />
-            </div>
+                    value={(value?.frequency_penalty as unknown as string) ?? ''}
+                    onInput={(e: any) => update('frequency_penalty', parseFloatOrUndef(e.currentTarget.value))}
+                >
+                    <span slot="label">Frequency Penalty</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Presence Penalty</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
                     step={0.1}
-                    value={value?.presence_penalty ?? ''}
-                    onChange={(e) => update('presence_penalty', parseFloatOrUndef(e.target.value))}
-                />
-            </div>
+                    value={(value?.presence_penalty as unknown as string) ?? ''}
+                    onInput={(e: any) => update('presence_penalty', parseFloatOrUndef(e.currentTarget.value))}
+                >
+                    <span slot="label">Presence Penalty</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Repetition Penalty</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
                     step={0.1}
-                    value={value?.repetition_penalty ?? ''}
-                    onChange={(e) => update('repetition_penalty', parseFloatOrUndef(e.target.value))}
-                />
-            </div>
+                    value={(value?.repetition_penalty as unknown as string) ?? ''}
+                    onInput={(e: any) => update('repetition_penalty', parseFloatOrUndef(e.currentTarget.value))}
+                >
+                    <span slot="label">Repetition Penalty</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Thinking Budget</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
-                    value={value?.thinking_budget ?? ''}
-                    onChange={(e) => update('thinking_budget', parseIntOrUndef(e.target.value))}
-                />
-            </div>
+                    value={(value?.thinking_budget as unknown as string) ?? ''}
+                    onInput={(e: any) => update('thinking_budget', parseIntOrUndef(e.currentTarget.value))}
+                >
+                    <span slot="label">Thinking Budget</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Thinking (JSON)</label>
-                <textarea
-                    rows={3}
+            <VscodeDivider></VscodeDivider>
+
+            <VscodeFormGroup>
+                <VscodeTextarea
+                    rows={3 as any}
                     placeholder='{"type":"enabled"}'
                     value={prettyJson(value?.thinking)}
-                    onChange={(e) => update('thinking', tryParseJson(e.target.value))}
-                />
-            </div>
+                    onInput={(e: any) => update('thinking', tryParseJson(e.currentTarget.value))}
+                >
+                    <span slot="label">Thinking (JSON)</span>
+                </VscodeTextarea>
+                <VscodeFormHelper>Set to {"{"}"type":"enabled"{"}"} to enable</VscodeFormHelper>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Enable Thinking</label>
-                <label className="checkbox-label">
-                    <input
-                        type="checkbox"
-                        checked={!!value?.enable_thinking}
-                        onChange={(e) => update('enable_thinking', e.target.checked)}
-                    />
+            <VscodeFormGroup>
+                <VscodeCheckbox
+                    checked={!!value?.enable_thinking}
+                    onInput={(e: any) => update('enable_thinking', (e.currentTarget as any).checked)}
+                >
                     Enable thinking features for this model
-                </label>
-            </div>
+                </VscodeCheckbox>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Reasoning (JSON)</label>
-                <textarea
-                    rows={3}
+            <VscodeFormGroup>
+                <VscodeTextarea
+                    rows={3 as any}
                     placeholder='{"enabled":true,"effort":"high"}'
                     value={prettyJson(value?.reasoning)}
-                    onChange={(e) => update('reasoning', tryParseJson(e.target.value))}
-                />
-            </div>
+                    onInput={(e: any) => update('reasoning', tryParseJson(e.currentTarget.value))}
+                >
+                    <span slot="label">Reasoning (JSON)</span>
+                </VscodeTextarea>
+                <VscodeFormHelper>OpenAI-style reasoning: set enabled/effort or max_tokens</VscodeFormHelper>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Reasoning Effort</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="text"
-                    value={value?.reasoning_effort ?? ''}
-                    onChange={(e) => update('reasoning_effort', e.target.value)}
-                />
-            </div>
+                    value={(value?.reasoning_effort as unknown as string) ?? ''}
+                    onInput={(e: any) => update('reasoning_effort', e.currentTarget.value)}
+                >
+                    <span slot="label">Reasoning Effort</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Extra (JSON)</label>
-                <textarea
-                    rows={4}
+            <VscodeFormGroup>
+                <VscodeTextarea
+                    rows={4 as any}
                     placeholder='{"custom_param":"value"}'
                     value={prettyJson(value?.extra)}
-                    onChange={(e) => update('extra', tryParseJson(e.target.value))}
-                />
-            </div>
+                    onInput={(e: any) => update('extra', tryParseJson(e.currentTarget.value))}
+                >
+                    <span slot="label">Extra (JSON)</span>
+                </VscodeTextarea>
+                <VscodeFormHelper>Provider-specific parameters (JSON object)</VscodeFormHelper>
+            </VscodeFormGroup>
         </div>
     );
 };

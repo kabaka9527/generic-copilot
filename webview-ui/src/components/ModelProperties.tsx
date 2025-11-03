@@ -2,6 +2,15 @@
 import React from 'react';
 import type { ModelProperties, ProviderConfig } from '../../../src/types';
 import { prettyJson, tryParseJson, parseIntOrUndef } from '../utils';
+import {
+    VscodeTextfield,
+    VscodeTextarea,
+    VscodeCheckbox,
+    VscodeSingleSelect,
+    VscodeOption,
+    VscodeFormGroup,
+    VscodeFormHelper,
+} from '@vscode-elements/react-elements';
 
 export interface ModelPropertiesProps {
     value: ModelProperties;
@@ -21,9 +30,9 @@ const ModelPropertiesForm: React.FC<ModelPropertiesProps> = ({ value, providers,
     };
 
     const providerOptions = providers.map((p) => (
-        <option key={p.key} value={p.key}>
+        <VscodeOption key={p.key} value={p.key}>
             {p.displayName || p.key}
-        </option>
+        </VscodeOption>
     ));
 
     return (
@@ -37,106 +46,134 @@ const ModelPropertiesForm: React.FC<ModelPropertiesProps> = ({ value, providers,
                 </em>
             </div>
 
-            <div className="form-group">
-                <label>Model ID (required) *</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="text"
                     placeholder="e.g., gpt-4, claude-3-opus"
-                    value={value?.id ?? ''}
-                    onChange={(e) => update('id', e.target.value)}
-                />
-                <div className="error" style={{ display: value?.id ? 'none' : 'block' }}>
+                    value={(value?.id as unknown as string) ?? ''}
+                    onInput={(e: any) => update('id', e.currentTarget.value)}
+                >
+                    <span slot="label">Model ID (required) *</span>
+                </VscodeTextfield>
+                <VscodeFormHelper style={{ color: 'var(--vscode-errorForeground)', display: value?.id ? 'none' : 'block' }}>
                     Model ID is required
-                </div>
-            </div>
+                </VscodeFormHelper>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Display Name</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="text"
                     placeholder="Optional human-readable name"
-                    value={value?.displayName ?? ''}
-                    onChange={(e) => update('displayName', e.target.value)}
-                />
-            </div>
+                    value={(value?.displayName as unknown as string) ?? ''}
+                    onInput={(e: any) => update('displayName', e.currentTarget.value)}
+                >
+                    <span slot="label">Display Name</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Provider</label>
-                <select value={value?.provider ?? ''} onChange={(e) => update('provider', e.target.value)}>
-                    <option value="">Select a provider</option>
+            <VscodeFormGroup>
+                <VscodeSingleSelect
+                    value={(value?.provider as unknown as string) ?? ''}
+                    onInput={(e: any) => update('provider', e.currentTarget.value)}
+                >
+                    <span slot="label">Provider</span>
+                    <VscodeOption value="" disabled>
+                        Select a provider
+                    </VscodeOption>
                     {providerOptions}
-                </select>
-            </div>
+                </VscodeSingleSelect>
+                <VscodeFormHelper>Select a provider to inherit baseUrl and defaults (optional)</VscodeFormHelper>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Owned By</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="text"
                     placeholder="e.g., openai, anthropic"
-                    value={value?.owned_by ?? ''}
-                    onChange={(e) => update('owned_by', e.target.value)}
-                />
-            </div>
+                    value={(value?.owned_by as unknown as string) ?? ''}
+                    onInput={(e: any) => update('owned_by', e.currentTarget.value)}
+                >
+                    <span slot="label">Owned By</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Config ID</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="text"
                     placeholder="Optional: e.g., thinking, fast"
-                    value={value?.configId ?? ''}
-                    onChange={(e) => update('configId', e.target.value)}
-                />
-            </div>
+                    value={(value?.configId as unknown as string) ?? ''}
+                    onInput={(e: any) => update('configId', e.currentTarget.value)}
+                >
+                    <span slot="label">Config ID</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Base URL (override)</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="text"
                     placeholder="Leave empty to use provider base URL"
-                    value={value?.baseUrl ?? ''}
-                    onChange={(e) => update('baseUrl', e.target.value)}
-                />
-            </div>
+                    value={(value?.baseUrl as unknown as string) ?? ''}
+                    onInput={(e: any) => update('baseUrl', e.currentTarget.value)}
+                >
+                    <span slot="label">Base URL (override)</span>
+                </VscodeTextfield>
+                <VscodeFormHelper>Override provider base URL for this model (optional)</VscodeFormHelper>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Headers (JSON)</label>
-                <textarea
-                    rows={3}
+            <VscodeFormGroup>
+                <VscodeTextarea
+                    rows={3 as any}
                     placeholder='{"X-Custom-Header":"value"}'
                     value={prettyJson(value?.headers)}
-                    onChange={(e) => update('headers', tryParseJson<Record<string, string>>(e.target.value))}
-                />
-            </div>
+                    onInput={(e: any) =>
+                        update('headers', tryParseJson<Record<string, string>>(e.currentTarget.value))
+                    }
+                >
+                    <span slot="label">Headers (JSON)</span>
+                </VscodeTextarea>
+                <VscodeFormHelper>Custom headers for this model (JSON object)</VscodeFormHelper>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Architecture (JSON)</label>
-                <textarea
-                    rows={2}
+            <VscodeFormGroup>
+                <VscodeTextarea
+                    rows={2 as any}
                     placeholder='{"input_modalities":["text","image_url"]}'
                     value={prettyJson(value?.architecture)}
-                    onChange={(e) => update('architecture', tryParseJson(e.target.value))}
-                />
-            </div>
+                    onInput={(e: any) => update('architecture', tryParseJson(e.currentTarget.value))}
+                >
+                    <span slot="label">Architecture (JSON)</span>
+                </VscodeTextarea>
+                <VscodeFormHelper>Model capabilities metadata (JSON object)</VscodeFormHelper>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label>Context Length</label>
-                <input
+            <VscodeFormGroup>
+                <VscodeTextfield
                     type="number"
-                    value={value?.context_length ?? ''}
-                    onChange={(e) => update('context_length', parseIntOrUndef(e.target.value))}
-                />
-            </div>
+                    value={(value?.context_length as unknown as string) ?? ''}
+                    onInput={(e: any) => update('context_length', parseIntOrUndef(e.currentTarget.value))}
+                >
+                    <span slot="label">Context Length</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
 
-            <div className="form-group">
-                <label className="checkbox-label">
-                    <input
-                        type="checkbox"
-                        checked={!!value?.vision}
-                        onChange={(e) => update('vision', e.target.checked)}
-                    />
+            <VscodeFormGroup>
+                <VscodeCheckbox
+                    checked={!!value?.vision}
+                    onInput={(e: any) => update('vision', (e.currentTarget as any).checked)}
+                >
                     Vision Support
-                </label>
-            </div>
+                </VscodeCheckbox>
+            </VscodeFormGroup>
+
+            <VscodeFormGroup>
+                <VscodeTextfield
+                    type="text"
+                    placeholder="e.g., gpt-4, claude-3, gemini"
+                    value={(value?.family as unknown as string) ?? ''}
+                    onInput={(e: any) => update('family', e.currentTarget.value)}
+                >
+                    <span slot="label">Family</span>
+                </VscodeTextfield>
+            </VscodeFormGroup>
         </div>
     );
 };

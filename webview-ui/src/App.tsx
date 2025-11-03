@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ModelItem, ProviderConfig, ModelProperties, ModelParameters } from '../../src/types';
 import { Providers } from './components/Providers';
 import { Models } from './components/Models';
+import { VscodeButton, VscodeDivider, VscodeTabs, VscodeTabHeader, VscodeTabPanel } from '@vscode-elements/react-elements';
 
 declare function acquireVsCodeApi(): {
     postMessage: (message: any) => void;
@@ -111,19 +112,41 @@ const App: React.FC = () => {
         <div className="p-5" style={{ color: 'var(--vscode-foreground)', fontFamily: 'var(--vscode-font-family)' }}>
             <h1>Generic Copilot Configuration</h1>
 
-            <div className="section">
-                <h2>Providers</h2>
-                <Providers providers={providers} onChange={setProviders} />
-            </div>
+            <VscodeTabs>
+                <VscodeTabHeader slot="header">Providers</VscodeTabHeader>
+                <VscodeTabHeader slot="header">Models</VscodeTabHeader>
+                <VscodeTabPanel>
+                    <div className="section">
+                        <Providers providers={providers} onChange={setProviders} />
+                    </div>
+                </VscodeTabPanel>
+                <VscodeTabPanel>
+                    <div className="section">
+                        <Models providers={providers} models={models} onChange={setModels} />
+                    </div>
+                </VscodeTabPanel>
+            </VscodeTabs>
 
-            <div className="section">
-                <h2>Models</h2>
-                <Models providers={providers} models={models} onChange={setModels} />
-            </div>
-
-            <div className="save-section">
-                <button onClick={onSave}>Save Configuration</button>
-                <button onClick={openSettings} className="secondary">Open settings.json</button>
+            <div
+                className="sticky-actions"
+                style={{
+                    position: 'sticky',
+                    bottom: 0,
+                    background: 'var(--vscode-editor-background)',
+                    borderTop: '1px solid var(--vscode-dropdown-border)',
+                    padding: '12px 0',
+                    zIndex: 10,
+                }}
+            >
+                <VscodeDivider></VscodeDivider>
+                <div className="save-section" style={{ display: 'flex', gap: 8 }}>
+                    <VscodeButton onClick={onSave} disabled={loading}>
+                        Save Configuration
+                    </VscodeButton>
+                    <VscodeButton onClick={openSettings} secondary>
+                        Open settings.json
+                    </VscodeButton>
+                </div>
             </div>
             {loading && <div className="empty-state">Loading configuration…</div>}
         </div>
