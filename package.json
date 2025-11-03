@@ -71,95 +71,9 @@
 								"type": "string",
 								"description": "Base URL for the provider's API endpoint."
 							},
-							"defaults": {
+							"headers": {
 								"type": "object",
-								"description": "(Optional) Default parameters that models can inherit.",
-								"properties": {
-									"context_length": {
-										"type": "number",
-										"description": "Default context length for models."
-									},
-									"max_tokens": {
-										"type": "number",
-										"description": "Default max tokens for models."
-									},
-									"max_completion_tokens": {
-										"type": "number",
-										"description": "Default max completion tokens for models."
-									},
-									"temperature": {
-										"type": [
-											"number",
-											"null"
-										],
-										"description": "Default temperature for models."
-									},
-									"top_p": {
-										"type": [
-											"number",
-											"null"
-										],
-										"description": "Default top_p for models."
-									},
-									"top_k": {
-										"type": "number",
-										"description": "Default top_k for models."
-									},
-									"min_p": {
-										"type": "number",
-										"description": "Default min_p for models."
-									},
-									"frequency_penalty": {
-										"type": "number",
-										"description": "Default frequency penalty for models."
-									},
-									"presence_penalty": {
-										"type": "number",
-										"description": "Default presence penalty for models."
-									},
-									"repetition_penalty": {
-										"type": "number",
-										"description": "Default repetition penalty for models."
-									},
-									"vision": {
-										"type": "boolean",
-										"description": "Default vision capability for models."
-									},
-								"family": {
-									"type": "string",
-									"description": "Default model family for models."
-								},
-								"reasoning_effort": {
-								"type": [
-									"string",
-									"null"
-								],
-								"enum": [
-									"minimal",
-									"low",
-									"medium",
-									"high",
-									null
-								],
-								"description": "Default reasoning effort for models."
-							},
-								"thinking_budget": {
-										"type": "number",
-										"description": "Default thinking budget for models."
-									},
-									"thinking": {
-										"type": "object",
-										"description": "Default thinking configuration for models."
-									},
-									"reasoning": {
-										"type": "object",
-										"description": "Default reasoning configuration for models."
-									},
-									"extra": {
-										"type": "object",
-										"description": "Default extra parameters for models."
-									}
-								}
+								"description": "(Optional) Custom HTTP headers to include in requests to this provider."
 							}
 						},
 						"required": [
@@ -167,7 +81,7 @@
 							"baseUrl"
 						]
 					},
-					"description": "A list of provider configurations. Models can reference providers to inherit baseUrl, owned_by, and default parameters."
+					"description": "A list of provider configurations. Models can reference providers to inherit baseUrl"
 				},
 				"generic-copilot.models": {
 					"type": "array",
@@ -181,7 +95,7 @@
 							},
 							"provider": {
 								"type": "string",
-								"description": "(Optional) Reference to a provider key. If specified, the model inherits baseUrl, owned_by, and defaults from the provider configuration."
+								"description": "(Required) Reference to a provider key. Allows inheriting key and baseURL and headers"
 							},
 							"configId": {
 								"type": "string",
@@ -189,27 +103,18 @@
 							},
 							"owned_by": {
 								"type": "string",
-								"description": "Model provider (e.g., 'zai', 'openai'). Can be inherited from provider if 'provider' field is specified."
+								"description": "(Optional) Model provider (e.g., 'zai', 'openai'). "
 							},
 							"family": {
 								"type": "string",
-								"description": "Model family (e.g., 'gpt-4', 'claude-3', 'gemini'). Enables model-specific optimizations and behaviors. Defaults to 'generic' if not specified."
-							},
-							"baseUrl": {
-								"type": "string",
-								"description": "Base URL for the model provider. If not provided, the global generic-copilot.baseUrl will be used."
+								"description": " (Optional) Model family (e.g., 'gpt-4', 'claude-3', 'gemini'). Enables model-specific optimizations and behaviors. Defaults to 'generic' if not specified."
 							},
 							"context_length": {
 								"type": "number",
 								"default": 128000,
-								"minimum": 1000,
+								"minimum": 4096,
 								"maximum": 10000000,
 								"description": "Model support context length. Default is 128000."
-							},
-							"vision": {
-								"type": "boolean",
-								"default": false,
-								"description": "Model support vision. Default is false."
 							},
 							"max_tokens": {
 								"type": "number",
@@ -259,55 +164,14 @@
 								"default": 128,
 								"minimum": 128,
 								"maximum": 10000000,
-								"description": "Maximum number of tokens for chain-of-thought output. Not required."
+								"description": "Maximum number of tokens for chain-of-thought output. Primarily respected by anthropic models. "
 							},
 							"temperature": {
 								"type": "number",
-								"default": 0,
-								"minimum": 0,
-								"maximum": 2,
-								"description": "Sampling temperature (range: [0, 2]). Lower values make output more deterministic, higher values make it more creative. Default is 0."
-							},
-							"top_p": {
-								"type": "number",
 								"default": 1,
 								"minimum": 0,
-								"maximum": 1,
-								"description": "Top-p sampling value (range: (0, 1]). Default is 1."
-							},
-							"top_k": {
-								"type": "number",
-								"default": 50,
-								"minimum": 1,
-								"description": "Top-k sampling value (range: [1, Infinity)). Not required."
-							},
-							"min_p": {
-								"type": "number",
-								"default": 0,
-								"minimum": 0,
-								"maximum": 1,
-								"description": "Minimum probability threshold (range: [0, 1]). Not required."
-							},
-							"frequency_penalty": {
-								"type": "number",
-								"default": 0,
-								"minimum": -2,
 								"maximum": 2,
-								"description": "Frequency penalty (range: [-2, 2]). Not required."
-							},
-							"presence_penalty": {
-								"type": "number",
-								"default": 0,
-								"minimum": -2,
-								"maximum": 2,
-								"description": "Presence penalty (range: [-2, 2]). Not required."
-							},
-							"repetition_penalty": {
-								"type": "number",
-								"default": 0,
-								"minimum": 0,
-								"maximum": 2,
-								"description": "Repetition penalty (range: (0, 2]). Not required."
+								"description": "Sampling temperature (range: [0, 2]). Lower values make output more deterministic, higher values make it more creative. Default is 1."
 							},
 							"reasoning": {
 								"type": "object",
@@ -352,10 +216,11 @@
 							}
 						},
 						"required": [
-							"id"
+							"id",
+							"context_length",
+							"provider"
 						]
-					},
-					"description": "A list of preferred models to use. If provided, these models will be used directly instead of fetching from the API."
+					}
 				},
 				"generic-copilot.retry": {
 					"type": "object",

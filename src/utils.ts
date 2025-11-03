@@ -543,32 +543,7 @@ export function resolveModelWithProvider(model: ModelItem): ModelItem {
 		model_parameters: { ...model.model_parameters },
 	};
 
-	// Merge provider defaults into resolved model
-	if (provider.defaults) {
-		// Merge model_properties defaults
-		if (provider.defaults.model_properties) {
-			for (const [key, defVal] of Object.entries(provider.defaults.model_properties)) {
-				const curVal = (resolved.model_properties as unknown as Record<string, unknown>)[key];
-				if (curVal === undefined) {
-					(resolved.model_properties as unknown as Record<string, unknown>)[key] = defVal;
-				} else if (isPlainObject(curVal) && isPlainObject(defVal)) {
-					(resolved.model_properties as unknown as Record<string, unknown>)[key] = { ...defVal, ...curVal };
-				}
-			}
-		}
 
-		// Merge model_parameters defaults
-		if (provider.defaults.model_parameters) {
-			for (const [key, defVal] of Object.entries(provider.defaults.model_parameters)) {
-				const curVal = (resolved.model_parameters as unknown as Record<string, unknown>)[key];
-				if (curVal === undefined) {
-					(resolved.model_parameters as unknown as Record<string, unknown>)[key] = defVal;
-				} else if (isPlainObject(curVal) && isPlainObject(defVal)) {
-					(resolved.model_parameters as unknown as Record<string, unknown>)[key] = { ...defVal, ...curVal };
-				}
-			}
-		}
-	}
 
 	return resolved;
 }

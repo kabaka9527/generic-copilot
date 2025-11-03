@@ -422,71 +422,6 @@ suite('Utils Test Suite', () => {
             assert.strictEqual(result.model_properties.owned_by, 'test-provider');
         });
 
-        test('should inherit defaults from provider', () => {
-            const providers: ProviderConfig[] = [{
-                key: 'test-provider',
-                baseUrl: 'https://test.com/v1',
-                defaults: {
-                    model_properties: {
-                        context_length: 100000,
-                        vision: true
-                    },
-                    model_parameters: {
-                        temperature: 0.7
-                    }
-                }
-            }];
-
-            mockConfig.set('generic-copilot.providers', providers);
-
-            const model: ModelItem = {
-                model_properties: {
-                    id: 'test-model',
-                    provider: 'test-provider',
-                    owned_by: 'temp'
-                },
-                model_parameters: {}
-            };
-
-            const result = resolveModelWithProvider(model);
-            assert.strictEqual(result.model_properties.context_length, 100000);
-            assert.strictEqual(result.model_parameters.temperature, 0.7);
-            assert.strictEqual(result.model_properties.vision, true);
-        });
-
-        test('should not override explicit model values with provider defaults', () => {
-            const providers: ProviderConfig[] = [{
-                key: 'test-provider',
-                baseUrl: 'https://test.com/v1',
-                defaults: {
-                    model_properties: {
-                        vision: true
-                    },
-                    model_parameters: {
-                        temperature: 0.7
-                    }
-                }
-            }];
-
-            mockConfig.set('generic-copilot.providers', providers);
-
-            const model: ModelItem = {
-                model_properties: {
-                    id: 'test-model',
-                    provider: 'test-provider',
-                    owned_by: 'temp',
-                    vision: false
-                },
-                model_parameters: {
-                    temperature: 0.3
-                }
-            };
-
-            const result = resolveModelWithProvider(model);
-            assert.strictEqual(result.model_parameters.temperature, 0.3);
-            assert.strictEqual(result.model_properties.vision, false);
-        });
-
         test('should handle missing provider gracefully', () => {
             mockConfig.set('generic-copilot.providers', []);
 
@@ -682,7 +617,6 @@ suite('Utils Test Suite', () => {
                     id: 'test-model',
                     owned_by: 'test-provider',
                     context_length: 128000,
-                    vision: true,
                     family: 'gpt-4',
                 },
                 model_parameters: {
@@ -694,7 +628,6 @@ suite('Utils Test Suite', () => {
             assert.strictEqual(props.id, 'test-model');
             assert.strictEqual(props.owned_by, 'test-provider');
             assert.strictEqual(props.context_length, 128000);
-            assert.strictEqual(props.vision, true);
             assert.strictEqual(props.family, 'gpt-4');
         });
     });

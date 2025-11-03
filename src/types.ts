@@ -48,10 +48,6 @@ export interface Provider {
 	context_length?: number;
 }
 
-export interface Architecture {
-	input_modalities?: string[];
-	output_modalities?: string[];
-}
 
 /**
  * Parameters sent to the model API in the request body
@@ -87,12 +83,7 @@ export interface ModelParameters {
  */
 export interface ModelProperties {
 	id: string;
-	object?: string;
-	created?: number;
-	/**
-	 * Optional human-friendly display name for this model configuration.
-	 * When provided, the UI should prefer this over the raw model id.
-	 */
+
 	displayName?: string;
 	/**
 	 * Model provider. Can be overridden by provider reference.
@@ -106,10 +97,7 @@ export interface ModelProperties {
 	provider?: string;
 	configId?: string;
 	baseUrl?: string;
-	providers?: Provider[];
-	architecture?: Architecture;
 	context_length?: number;
-	vision?: boolean;
 	/**
 	 * Optional family specification for the model. This allows users to specify
 	 * the model family (e.g., "gpt-4", "claude-3", "gemini") to enable family-specific
@@ -117,8 +105,6 @@ export interface ModelProperties {
 	 * defaults to "generic".
 	 */
 	family?: string;
-
-	headers?: Record<string, string>;
 }
 
 /**
@@ -218,9 +204,5 @@ export interface ProviderConfig {
 	baseUrl: string;
 	/** Custom HTTP headers for all requests */
 	headers?: Record<string, string>;
-	/** Default parameters that models can inherit - grouped structure only */
-	defaults?: {
-		model_properties?: Partial<ModelProperties>;
-		model_parameters?: Partial<ModelParameters>;
-	};
+
 }

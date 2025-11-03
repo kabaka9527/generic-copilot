@@ -194,39 +194,6 @@ suite('ProvideModel Test Suite', () => {
             assert.strictEqual(result[0].maxInputTokens, 128000 - 4096);
         });
 
-        test('should set vision capability correctly', async () => {
-            const models: ModelItem[] = [
-                {
-                    model_properties: {
-                        id: 'vision-model',
-                        owned_by: 'test',
-                        vision: true,
-                    },
-                    model_parameters: {}
-                },
-                {
-                    model_properties: {
-                        id: 'text-model',
-                        owned_by: 'test',
-                        vision: false,
-                    },
-                    model_parameters: {}
-                }
-            ];
-
-            mockConfig.set('generic-copilot.models', models);
-
-            const token = new MockCancellationToken();
-            const result = await prepareLanguageModelChatInformation(
-                { silent: false },
-                token,
-                mockSecrets,
-                userAgent
-            );
-
-            assert.strictEqual(result[0].capabilities.imageInput, true);
-            assert.strictEqual(result[1].capabilities.imageInput, false);
-        });
 
         test('should set tool calling capability', async () => {
             const models: ModelItem[] = [{
@@ -333,95 +300,6 @@ suite('ProvideModel Test Suite', () => {
             assert.strictEqual(result[2].id, 'provider-1/model-3');
         });
 
-        test('should inherit properties from provider', async () => {
-            const providers: ProviderConfig[] = [{
-                key: 'test-provider',
-                baseUrl: 'https://test.com/v1',
-                displayName: 'Test Provider',
-                defaults: {
-
-                    model_properties: {
-
-                        context_length: 200000,
-
-                        vision: true,
-
-                        family: 'test-family'
-
-                    },
-
-                }
-            }];
-
-            const models: ModelItem[] = [{
-                model_properties: {
-                    id: 'test-model',
-                    provider: 'test-provider',
-                    owned_by: 'temp',
-                },
-                model_parameters: {}
-            }];
-
-            mockConfig.set('generic-copilot.providers', providers);
-            mockConfig.set('generic-copilot.models', models);
-
-            const token = new MockCancellationToken();
-            const result = await prepareLanguageModelChatInformation(
-                { silent: false },
-                token,
-                mockSecrets,
-                userAgent
-            );
-
-            assert.strictEqual(result[0].family, 'test-family');
-            assert.strictEqual(result[0].capabilities.imageInput, true);
-            // Context length should be inherited
-            assert.ok(result[0].maxInputTokens > 100000);
-        });
-
-        test('should handle model-specific overrides of provider defaults', async () => {
-            const providers: ProviderConfig[] = [{
-                key: 'test-provider',
-                baseUrl: 'https://test.com/v1',
-                defaults: {
-
-                    model_properties: {
-
-                        vision: true,
-
-                        family: 'default-family'
-
-                    },
-
-                }
-            }];
-
-            const models: ModelItem[] = [{
-                model_properties: {
-                    id: 'test-model',
-                    provider: 'test-provider',
-                    owned_by: 'temp',
-                    vision: false,
-                    family: 'custom-family',
-                },
-                model_parameters: {}
-            }];
-
-            mockConfig.set('generic-copilot.providers', providers);
-            mockConfig.set('generic-copilot.models', models);
-
-            const token = new MockCancellationToken();
-            const result = await prepareLanguageModelChatInformation(
-                { silent: false },
-                token,
-                mockSecrets,
-                userAgent
-            );
-
-            // Model-specific values should override provider defaults
-            assert.strictEqual(result[0].family, 'custom-family');
-            assert.strictEqual(result[0].capabilities.imageInput, false);
-        });
 
         test('should set version and detail fields', async () => {
             const providers: ProviderConfig[] = [{

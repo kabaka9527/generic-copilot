@@ -37,22 +37,7 @@ suite('End-to-End Integration Test Suite', () => {
             const providers: ProviderConfig[] = [{
                 key: 'test-provider',
                 baseUrl: 'https://test.com/v1',
-                displayName: 'Test Provider',
-                defaults: {
-
-                    model_properties: {
-
-                        context_length: 100000
-
-                    },
-
-                    model_parameters: {
-
-                        temperature: 0.7
-
-                    }
-
-                }
+                displayName: 'Test Provider'
             }];
 
             const models: ModelItem[] = [{
@@ -60,7 +45,6 @@ suite('End-to-End Integration Test Suite', () => {
                     id: 'test-model',
                     provider: 'test-provider',
                     owned_by: 'test-provider',
-                    vision: false,
                 },
                 model_parameters: {}
             }];
@@ -434,8 +418,7 @@ suite('End-to-End Integration Test Suite', () => {
                 model_properties: {
                     id: 'vision-model',
                     provider: 'test-provider',
-                    owned_by: 'test-provider',
-                    vision: true,
+                    owned_by: 'test-provider'
                 },
                 model_parameters: {}
             }];
