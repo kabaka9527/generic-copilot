@@ -97,127 +97,142 @@
 								"type": "string",
 								"description": "(Required) Reference to a provider key. Allows inheriting key and baseURL and headers"
 							},
+							"displayName": {
+								"type": "string",
+								"description": "(Optional) Display name for the model."
+							},
 							"configId": {
 								"type": "string",
 								"description": "(Optional) Configuration ID for this model. Allows defining the same model with different settings (e.g. 'glm-4.6::thinking', 'glm-4.6::no-thinking')."
 							},
-							"owned_by": {
-								"type": "string",
-								"description": "(Optional) Model provider (e.g., 'zai', 'openai'). "
-							},
-							"family": {
-								"type": "string",
-								"description": " (Optional) Model family (e.g., 'gpt-4', 'claude-3', 'gemini'). Enables model-specific optimizations and behaviors. Defaults to 'generic' if not specified."
-							},
-							"context_length": {
-								"type": "number",
-								"default": 128000,
-								"minimum": 4096,
-								"maximum": 10000000,
-								"description": "Model support context length. Default is 128000."
-							},
-							"max_tokens": {
-								"type": "number",
-								"default": 4096,
-								"minimum": 1,
-								"maximum": 10000000,
-								"description": "Maximum number of tokens to generate (range: [1, context_length)). Default is 4096."
-							},
-							"max_completion_tokens": {
-								"type": "number",
-								"default": 4096,
-								"minimum": 1,
-								"maximum": 10000000,
-								"description": "Maximum number of tokens to generate (OpenAI new standard parameter)."
-							},
-							"reasoning_effort": {
-								"type": [
-									"string",
-									"null"
-								],
-								"default": "medium",
-								"enum": [
-									"minimal",
-									"low",
-									"medium",
-									"high",
-									null
-								],
-								"description": "Reasoning effort level (OpenAI reasoning configuration)"
-							},
-							"thinking": {
+							"model_properties": {
 								"type": "object",
-								"description": "Thinking configuration for Zai provider",
+								"description": "(Optional) Model properties including context_length, family, owned_by, etc.",
 								"properties": {
-									"type": {
+									"context_length": {
+										"type": "number",
+										"default": 128000,
+										"minimum": 4096,
+										"maximum": 10000000,
+										"description": "Model support context length. Default is 128000."
+									},
+									"owned_by": {
 										"type": "string",
-										"enum": [
-											"enabled",
-											"disabled"
-										],
-										"description": "Set to 'enabled' to enable thinking, 'disabled' to disable thinking"
+										"description": "(Optional) Model provider (e.g., 'zai', 'openai'). "
+									},
+									"family": {
+										"type": "string",
+										"description": " (Optional) Model family (e.g., 'gpt-4', 'claude-3', 'gemini'). Enables model-specific optimizations and behaviors. Defaults to 'generic' if not specified."
 									}
 								}
 							},
-							"thinking_budget": {
-								"type": "number",
-								"default": 128,
-								"minimum": 128,
-								"maximum": 10000000,
-								"description": "Maximum number of tokens for chain-of-thought output. Primarily respected by anthropic models. "
-							},
-							"temperature": {
-								"type": "number",
-								"default": 1,
-								"minimum": 0,
-								"maximum": 2,
-								"description": "Sampling temperature (range: [0, 2]). Lower values make output more deterministic, higher values make it more creative. Default is 1."
-							},
-							"reasoning": {
+							"model_parameters": {
 								"type": "object",
-								"default": {
-									"effort": "medium"
-								},
+								"description": "(Optional) Model parameters including temperature, max_tokens, reasoning settings, etc.",
 								"properties": {
-									"effort": {
-										"type": "string",
-										"default": "medium",
-										"enum": [
-											"high",
-											"medium",
-											"low",
-											"minimal",
-											"auto"
-										],
-										"description": "Reasoning effort level for OpenRouter/xAI (high, medium, low, minimal, auto)"
-									},
-									"exclude": {
-										"type": "boolean",
-										"default": false,
-										"description": "Exclude reasoning tokens from the final response"
+									"temperature": {
+										"type": "number",
+										"default": 1,
+										"minimum": 0,
+										"maximum": 2,
+										"description": "Sampling temperature (range: [0, 2]). Lower values make output more deterministic, higher values make it more creative. Default is 1."
 									},
 									"max_tokens": {
 										"type": "number",
-										"default": 2000,
+										"default": 4096,
 										"minimum": 1,
-										"description": "Specific token limit for reasoning (Anthropic-style, alternative to effort)"
+										"maximum": 10000000,
+										"description": "Maximum number of tokens to generate (range: [1, context_length)). Default is 4096."
 									},
-									"enabled": {
-										"type": "boolean",
-										"default": true,
-										"description": "Enable reasoning (inferred from effort or max_tokens if not specified)"
+									"max_completion_tokens": {
+										"type": "number",
+										"default": 4096,
+										"minimum": 1,
+										"maximum": 10000000,
+										"description": "Maximum number of tokens to generate (OpenAI new standard parameter)."
+									},
+									"reasoning_effort": {
+										"type": [
+											"string",
+											"null"
+										],
+										"default": "medium",
+										"enum": [
+											"minimal",
+											"low",
+											"medium",
+											"high",
+											null
+										],
+										"description": "Reasoning effort level (OpenAI reasoning configuration)"
+									},
+									"thinking": {
+										"type": "object",
+										"description": "Thinking configuration for Zai provider",
+										"properties": {
+											"type": {
+												"type": "string",
+												"enum": [
+													"enabled",
+													"disabled"
+												],
+												"description": "Set to 'enabled' to enable thinking, 'disabled' to disable thinking"
+											}
+										}
+									},
+									"thinking_budget": {
+										"type": "number",
+										"default": 128,
+										"minimum": 128,
+										"maximum": 10000000,
+										"description": "Maximum number of tokens for chain-of-thought output. Primarily respected by anthropic models. "
+									},
+									"reasoning": {
+										"type": "object",
+										"default": {
+											"effort": "medium"
+										},
+										"properties": {
+											"effort": {
+												"type": "string",
+												"default": "medium",
+												"enum": [
+													"high",
+													"medium",
+													"low",
+													"minimal",
+													"auto"
+												],
+												"description": "Reasoning effort level for OpenRouter/xAI (high, medium, low, minimal, auto)"
+											},
+											"exclude": {
+												"type": "boolean",
+												"default": false,
+												"description": "Exclude reasoning tokens from the final response"
+											},
+											"max_tokens": {
+												"type": "number",
+												"default": 2000,
+												"minimum": 1,
+												"description": "Specific token limit for reasoning (Anthropic-style, alternative to effort)"
+											},
+											"enabled": {
+												"type": "boolean",
+												"default": true,
+												"description": "Enable reasoning (inferred from effort or max_tokens if not specified)"
+											}
+										},
+										"description": "Reasoning configuration for OpenRouter-compatible providers"
+									},
+									"extra": {
+										"type": "object",
+										"description": "Extra request parameters that will be used in /chat/completions."
 									}
-								},
-								"description": "Reasoning configuration for OpenRouter-compatible providers"
-							},
-							"extra": {
-								"type": "object",
-								"description": "Extra request parameters that will be used in /chat/completions."
+								}
 							}
 						},
 						"required": [
 							"id",
-							"context_length",
 							"provider"
 						]
 					}
@@ -263,10 +278,13 @@
 	"scripts": {
 		"prepublish": "npm run compile",
 		"download-api": "npx dts dev && mv vscode.proposed.*.ts src",
-		"compile": "tsc -p ./",
+		"compile": "tsc -p ./ && cd webview-ui && npm install && npm run compile",
+		"compile:extension": "tsc -p ./",
+		"compile:webview": "cd webview-ui && npm install && npm run compile",
 		"lint": "eslint",
 		"format": "prettier --write .",
 		"watch": "tsc -watch -p ./",
+		"watch:webview": "cd webview-ui && npm run watch",
 		"test": "npm run compile && vscode-test",
 		"package": "vsce package --out generic-copilot-providers.vsix"
 	},

@@ -9,3 +9,10 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
+webview-ui/src/**
+webview-ui/node_modules/**
+webview-ui/package.json
+webview-ui/package-lock.json
+webview-ui/tsconfig.json
+!webview-ui/dist/**
+!webview-ui/react.html
