@@ -65,7 +65,6 @@ export interface ModelParameters {
 	// OpenAI new standard parameter
 	max_completion_tokens?: number;
 	reasoning_effort?: string;
-	enable_thinking?: boolean;
 	thinking_budget?: number;
 	// New thinking configuration for Zai provider
 	thinking?: ThinkingConfig;
@@ -118,6 +117,10 @@ export interface ModelProperties {
 	 * defaults to "generic".
 	 */
 	family?: string;
+	/**
+	 * Enable thinking display features for this model.
+	 */
+	enable_thinking?: boolean;
 	headers?: Record<string, string>;
 }
 

@@ -129,15 +129,11 @@
 										"type": "string",
 										"description": "Default model family for models."
 									},
-									"reasoning_effort": {
-										"type": "string",
-										"description": "Default reasoning effort for models."
-									},
-									"enable_thinking": {
-										"type": "boolean",
-										"description": "Default enable_thinking for models."
-									},
-									"thinking_budget": {
+								"reasoning_effort": {
+									"type": "string",
+									"description": "Default reasoning effort for models."
+								},
+								"thinking_budget": {
 										"type": "number",
 										"description": "Default thinking budget for models."
 									},
@@ -188,6 +184,11 @@
 							"family": {
 								"type": "string",
 								"description": "Model family (e.g., 'gpt-4', 'claude-3', 'gemini'). Enables model-specific optimizations and behaviors. Defaults to 'generic' if not specified."
+							},
+							"enable_thinking": {
+								"type": "boolean",
+								"default": false,
+								"description": "Enable thinking display features for this model."
 							},
 							"baseUrl": {
 								"type": "string",
@@ -243,11 +244,6 @@
 										"description": "Set to 'enabled' to enable thinking, 'disabled' to disable thinking"
 									}
 								}
-							},
-							"enable_thinking": {
-								"type": "boolean",
-								"default": false,
-								"description": "Switches between thinking and non-thinking modes. Not required."
 							},
 							"thinking_budget": {
 								"type": "number",

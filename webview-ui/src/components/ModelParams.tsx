@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import type { ModelParameters } from '../../../src/types';
-import { tryParseJson, prettyJson, parseFloatOrNull, parseFloatOrUndef, parseIntOrUndef } from '../utils';
+import { tryParseJson, prettyJson, parseFloatOrNull, parseIntOrUndef } from '../utils';
 import {
     VscodeTextfield,
     VscodeTextarea,
-    VscodeCheckbox,
     VscodeFormHelper,
 } from '@vscode-elements/react-elements';
 
@@ -84,15 +83,6 @@ const ModelParamsForm: React.FC<ModelParamsProps> = ({ value, onChange }) => {
                 >
                 </VscodeTextarea>
                 <VscodeFormHelper>Set to {"{"}"type":"enabled"{"}"}  to enable</VscodeFormHelper>
-            </div>
-
-            <div className="form-field">
-                <VscodeCheckbox
-                    checked={!!value?.enable_thinking}
-                    onInput={(e: any) => update('enable_thinking', (e.currentTarget as any).checked)}
-                >
-                    Enable thinking display features for this model
-                </VscodeCheckbox>
             </div>
 
             <div className="form-field">

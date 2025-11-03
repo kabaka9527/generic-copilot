@@ -8,6 +8,7 @@ import {
     VscodeSingleSelect,
     VscodeOption,
     VscodeFormHelper,
+    VscodeCheckbox,
 } from '@vscode-elements/react-elements';
 
 export interface ModelPropertiesProps {
@@ -121,6 +122,15 @@ const ModelPropertiesForm: React.FC<ModelPropertiesProps> = ({ value, providers,
                     onInput={(e: any) => update('family', e.currentTarget.value)}
                 >
                 </VscodeTextfield>
+            </div>
+
+            <div className="form-field">
+                <VscodeCheckbox
+                    checked={!!value?.enable_thinking}
+                    onInput={(e: any) => update('enable_thinking', (e.currentTarget as any).checked)}
+                >
+                    Enable thinking display features for this model
+                </VscodeCheckbox>
             </div>
         </div>
     );

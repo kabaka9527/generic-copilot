@@ -323,6 +323,7 @@ export class ChatModelProvider implements LanguageModelChatProvider {
 
 		// Get model parameters using helper function (supports both flat and grouped structures)
 		const params = getModelParameters(um);
+		const properties = getModelProperties(um);
 
 		// temperature
 		const oTemperature = options.modelOptions?.temperature ?? 0;
@@ -358,7 +359,7 @@ export class ChatModelProvider implements LanguageModelChatProvider {
 		}
 
 		// enable_thinking (non-OpenRouter only)
-		const enableThinking = params.enable_thinking;
+		const enableThinking = properties.enable_thinking;
 		if (enableThinking !== undefined) {
 			rb.enable_thinking = enableThinking;
 

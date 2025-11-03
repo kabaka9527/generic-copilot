@@ -27,6 +27,7 @@ const toGrouped = (m: any): ModelItem => {
         family: m?.family,
         context_length: m?.context_length,
         vision: m?.vision,
+        enable_thinking: m?.enable_thinking,
         headers: m?.headers,
         architecture: m?.architecture,
     };
@@ -42,7 +43,6 @@ const toGrouped = (m: any): ModelItem => {
         repetition_penalty: m?.repetition_penalty,
         thinking_budget: m?.thinking_budget,
         thinking: m?.thinking,
-        enable_thinking: m?.enable_thinking,
         reasoning: m?.reasoning,
         reasoning_effort: m?.reasoning_effort,
         extra: m?.extra,

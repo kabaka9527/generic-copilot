@@ -468,9 +468,9 @@ suite('End-to-End Integration Test Suite', () => {
                         provider: 'test-provider',
                         owned_by: 'test-provider',
                         configId: 'thinking',
+                        enable_thinking: true,
                     },
                     model_parameters: {
-                        enable_thinking: true,
                     }
                 },
                 {
@@ -479,9 +479,9 @@ suite('End-to-End Integration Test Suite', () => {
                         provider: 'test-provider',
                         owned_by: 'test-provider',
                         configId: 'standard',
+                        enable_thinking: false,
                     },
                     model_parameters: {
-                        enable_thinking: false,
                     }
                 }
             ];
