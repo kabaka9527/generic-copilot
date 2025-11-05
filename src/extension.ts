@@ -13,12 +13,36 @@ export function activate(context: vscode.ExtensionContext) {
 	const ua = `generic-copilot/${extVersion} VSCode/${vscodeVersion}`;
 	const provider = new ChatModelProvider(context.secrets, ua);
 
-	vscode.lm.registerLanguageModelChatProvider("generic-copilot", provider);
+	let providerRegistration = vscode.lm.registerLanguageModelChatProvider("generic-copilot", provider);
+	context.subscriptions.push(providerRegistration);
 
 	// Command to open configuration GUI
 	context.subscriptions.push(
 		vscode.commands.registerCommand("generic-copilot.openConfiguration", () => {
 			ConfigurationPanel.createOrShow(context.extensionUri);
+		})
+	);
+
+	// Command to refresh model configurations
+	context.subscriptions.push(
+		vscode.commands.registerCommand("generic-copilot.refresh", async () => {
+			try {
+				const lm: unknown = vscode.lm as unknown;
+				const maybe = lm as { refreshLanguageModelChatProviders?: (vendor: string) => void };
+				if (typeof maybe.refreshLanguageModelChatProviders === "function") {
+					// @ts-expect-error - Proposed API method not in current types
+					vscode.lm.refreshLanguageModelChatProviders("generic-copilot");
+				} else {
+					// Fallback for older API: force re-register the provider
+					try { providerRegistration.dispose(); } catch { /* ignore */ }
+					providerRegistration = vscode.lm.registerLanguageModelChatProvider("generic-copilot", provider);
+					context.subscriptions.push(providerRegistration);
+				}
+				vscode.window.showInformationMessage("GenericCopilot model configurations refreshed.");
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : String(err);
+				vscode.window.showErrorMessage(`Failed to refresh GenericCopilot models: ${msg}`);
+			}
 		})
 	);
 

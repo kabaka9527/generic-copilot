@@ -32,6 +32,9 @@
 		"languageModelCapabilities",
 		"languageModelThinkingPart"
 	],
+	"activationEvents": [
+		"onLanguageModelChatProvider:generic-copilot"
+	],
 	"contributes": {
 		"languageModelChatProviders": [
 			{
@@ -48,6 +51,10 @@
 			{
 				"command": "generic-copilot.setProviderApikey",
 				"title": "GenericCopilot: Set Generic Compatible Multi-Provider Apikey"
+			},
+			{
+				"command": "generic-copilot.refresh",
+				"title": "GenericCopilot: Refresh Model Configs"
 			}
 		],
 		"configuration": {
