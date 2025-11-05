@@ -293,7 +293,7 @@
 		"watch": "tsc -watch -p ./",
 		"watch:webview": "cd webview-ui && npm run watch",
 		"test": "npm run compile && vscode-test",
-		"package": "vsce package --out generic-copilot-providers.vsix"
+		"package": "npm version patch --no-git-tag-version && vsce package --out generic-copilot-providers.vsix"
 	},
 	"dependencies": {},
 	"devDependencies": {
