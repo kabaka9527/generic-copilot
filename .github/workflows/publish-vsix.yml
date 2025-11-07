@@ -26,15 +26,11 @@ jobs:
         run: |
           npm ci
           npm run download-api
-
-      - name: Build webview UI
-        working-directory: webview-ui
-        run: |
-          npm ci
-          npm run build
+          npm run compile:extension
+          npm run compile:webview
 
       - name: Package VS Code extension
-        run: npx vsce package --no-dependencies
+        run: npx vsce package --out generic-copilot-providers.vsix
 
       - name: Get latest commit message
         id: commit
