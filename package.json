@@ -292,7 +292,7 @@
 		"watch": "tsc -watch -p ./",
 		"watch:webview": "cd webview-ui && npm run watch",
 		"test": "npm run compile && vscode-test",
-		"package": "npm version patch --no-git-tag-version && vsce package --out generic-copilot-providers.vsix"
+		"package": "vsce package --out generic-copilot-providers.vsix"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.0",
