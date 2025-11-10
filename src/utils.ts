@@ -7,9 +7,7 @@ import type {
 	OpenAIToolCall,
 	RetryConfig,
 	ProviderConfig,
-	ModelItem,
-	ModelParameters,
-	ModelProperties,
+	ModelItem
 } from "./types";
 
 const RETRY_MAX_ATTEMPTS = 3;
@@ -546,24 +544,6 @@ export function resolveModelWithProvider(model: ModelItem): ModelItem {
 
 
 	return resolved;
-}
-
-/**
- * Get model properties from a ModelItem.
- * @param model The model configuration
- * @returns Model properties
- */
-export function getModelProperties(model: ModelItem): ModelProperties {
-	return model.model_properties;
-}
-
-/**
- * Get model parameters from a ModelItem.
- * @param model The model configuration
- * @returns Model parameters
- */
-export function getModelParameters(model: ModelItem): ModelParameters {
-	return model.model_parameters;
 }
 
 /**

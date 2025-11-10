@@ -18,46 +18,25 @@ const toGrouped = (m: any): ModelItem => {
         return m as ModelItem;
     }
     const mp: Partial<ModelProperties> = {
-        id: m?.id ?? '',
-        provider: m?.provider,
-        configId: m?.configId,
         owned_by: m?.owned_by,
-        baseUrl: m?.baseUrl,
-        displayName: m?.displayName,
         family: m?.family,
         context_length: m?.context_length,
-        vision: m?.vision,
-        headers: m?.headers,
-        architecture: m?.architecture,
     };
     const par: Partial<ModelParameters> = {
-        max_tokens: m?.max_tokens,
-        max_completion_tokens: m?.max_completion_tokens,
         temperature: m?.temperature ?? undefined,
-        top_p: m?.top_p ?? undefined,
-        top_k: m?.top_k,
-        min_p: m?.min_p,
-        frequency_penalty: m?.frequency_penalty,
-        presence_penalty: m?.presence_penalty,
-        repetition_penalty: m?.repetition_penalty,
-        thinking_budget: m?.thinking_budget,
-        thinking: m?.thinking,
-        reasoning: m?.reasoning,
-        reasoning_effort: m?.reasoning_effort,
         extra: m?.extra,
     };
-    return { model_properties: mp as ModelProperties, model_parameters: par as ModelParameters } as ModelItem;
+    return {
+        id: m?.id ?? '',
+        displayName: m?.displayName,
+        provider: m?.provider,
+        configId: m?.configId,
+        model_properties: mp as ModelProperties,
+        model_parameters: par as ModelParameters
+    } as ModelItem;
 };
 
 const cleanProviderDefaults = (p: ProviderConfig): ProviderConfig => {
-    if (!p.defaults) { return p; }
-    const mp = p.defaults.model_properties ?? {};
-    const par = p.defaults.model_parameters ?? {};
-    if (Object.keys(mp).length === 0 && Object.keys(par).length === 0) {
-        const rest = { ...(p as any) };
-        delete (rest as any).defaults;
-        return rest as ProviderConfig;
-    }
     return p;
 };
 
@@ -93,7 +72,7 @@ const App: React.FC = () => {
             return;
         }
         // Validate models
-        const invalidModels = models.filter((m) => !(m && m.model_properties && m.model_properties.id));
+        const invalidModels = models.filter((m) => !(m && m.id));
         if (invalidModels.length > 0) {
             alert('Please fill in required field (id) for all models.');
             return;

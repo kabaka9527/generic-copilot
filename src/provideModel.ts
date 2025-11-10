@@ -2,10 +2,10 @@ import * as vscode from "vscode";
 import { CancellationToken, LanguageModelChatInformation } from "vscode";
 
 import type { ModelItem, ProviderConfig } from "./types";
-import { resolveModelWithProvider, getModelProperties, getModelParameters } from "./utils";
+import { resolveModelWithProvider } from "./utils";
 
 const DEFAULT_CONTEXT_LENGTH = 128000;
-const DEFAULT_MAX_TOKENS = 4096;
+const DEFAULT_MAX_TOKENS = 32000;
 
 /**
  * Get the list of available language models contributed by this provider
@@ -31,11 +31,11 @@ export async function prepareLanguageModelChatInformation(
 			const resolved = resolveModelWithProvider(m);
 
 			// Get model properties and parameters using helper functions
-			const props = getModelProperties(resolved);
-			const params = getModelParameters(resolved);
+			const props = resolved.model_properties;
+			//const params = getModelParameters(resolved);
 
 			const contextLen = props.context_length ?? DEFAULT_CONTEXT_LENGTH;
-			const maxOutput = params.max_completion_tokens ?? params.max_tokens ?? DEFAULT_MAX_TOKENS;
+			const maxOutput = DEFAULT_MAX_TOKENS;
 			const maxInput = Math.max(1, contextLen - maxOutput);
 
 			// Build canonical ID using provider key and raw model id

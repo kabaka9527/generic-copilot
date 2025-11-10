@@ -10,8 +10,6 @@ import {
     resolveModelWithProvider,
     createRetryConfig,
     executeWithRetry,
-    getModelProperties,
-    getModelParameters,
     processHeaders,
 } from '../../utils';
 import type { ModelItem, ProviderConfig } from '../../types';
@@ -628,7 +626,7 @@ suite('Utils Test Suite', () => {
                 },
             };
 
-            const props = getModelProperties(model);
+            const props = model.model_properties;
             assert.strictEqual(model.id, 'test-model');
             assert.strictEqual(props.owned_by, 'test-provider');
             assert.strictEqual(props.context_length, 128000);
@@ -646,16 +644,15 @@ suite('Utils Test Suite', () => {
                 },
                 model_parameters: {
                     temperature: 0.7,
-                    max_tokens: 4096,
                     extra: {
                         custom_param: 'value',
                     },
                 },
             };
 
-            const params = getModelParameters(model);
+            const params = model.model_parameters;
             assert.strictEqual(params.temperature, 0.7);
-            assert.strictEqual(params.max_tokens, 4096);
+
 
             assert.deepStrictEqual(params.extra, { custom_param: 'value' });
         });
@@ -673,7 +670,7 @@ suite('Utils Test Suite', () => {
                 },
             };
 
-            const params = getModelParameters(model);
+            const params = model.model_parameters;
             assert.strictEqual(params.temperature, null);
         });
     });
@@ -700,13 +697,13 @@ suite('Utils Test Suite', () => {
                 'X-Static-Header': 'static-value'
             };
             const result = processHeaders(headers);
-            
+
             // Check that RANDOM was replaced with a UUID-like string
             assert.ok(result['X-Request-ID']);
             assert.notStrictEqual(result['X-Request-ID'], 'RANDOM');
             // UUID v4 format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
             assert.match(result['X-Request-ID'], /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
-            
+
             // Check that static header was preserved
             assert.strictEqual(result['X-Static-Header'], 'static-value');
         });
@@ -717,11 +714,11 @@ suite('Utils Test Suite', () => {
                 'X-Trace-ID': 'RANDOM'
             };
             const result = processHeaders(headers);
-            
+
             // Both should be valid UUIDs
             assert.match(result['X-Request-ID'], /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
             assert.match(result['X-Trace-ID'], /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
-            
+
             // They should be different UUIDs
             assert.notStrictEqual(result['X-Request-ID'], result['X-Trace-ID']);
         });
@@ -734,7 +731,7 @@ suite('Utils Test Suite', () => {
                 'X-Header-4': 'PREFIX_RANDOM'
             };
             const result = processHeaders(headers);
-            
+
             // Only exact RANDOM should be replaced
             assert.match(result['X-Header-1'], /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
             assert.strictEqual(result['X-Header-2'], 'random');

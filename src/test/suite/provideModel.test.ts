@@ -126,7 +126,7 @@ suite('ProvideModel Test Suite', () => {
                     context_length: 100000,
                 },
                 model_parameters: {
-                    max_tokens: 4096,
+
                 }
             }];
 
@@ -154,8 +154,6 @@ suite('ProvideModel Test Suite', () => {
                     context_length: 100000,
                 },
                 model_parameters: {
-                    max_tokens: 2048,
-                    max_completion_tokens: 4096,
                 }
             }];
 
@@ -402,7 +400,6 @@ suite('ProvideModel Test Suite', () => {
                     context_length: 1000,
                 },
                 model_parameters: {
-                    max_tokens: 1000,
                 }
             }];
 

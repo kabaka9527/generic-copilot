@@ -43,19 +43,7 @@ export interface ChatMessageContent {
 export interface ModelParameters {
 	// Allow null so user can explicitly disable sending this parameter (fall back to provider default)
 	temperature?: number | null;
-	top_p?: number | null;
 
-	max_tokens?: number;
-	// OpenAI new standard parameter
-	max_completion_tokens?: number;
-	reasoning_effort?: 'minimal' | 'low' | 'medium' | 'high' | null;
-	thinking_budget?: number;
-	// New thinking configuration for Zai provider
-	thinking?: ThinkingConfig;
-	frequency_penalty?: number;
-	presence_penalty?: number;
-	repetition_penalty?: number;
-	reasoning?: ReasoningConfig;
 	/**
 	 * Extra configuration parameters sent to the API.
 	 * This allows users to add any additional parameters they might need
@@ -100,15 +88,7 @@ export interface ModelItem {
 	model_parameters: ModelParameters;
 }
 
-/**
- * OpenRouter reasoning configuration
- */
-export interface ReasoningConfig {
-	effort?: string;
-	exclude?: boolean;
-	max_tokens?: number;
-	enabled?: boolean;
-}
+
 
 /**
  * Response envelope for the router models listing.
@@ -154,12 +134,7 @@ export interface ReasoningTextDetail extends ReasoningDetailCommon {
 
 export type ReasoningDetail = ReasoningSummaryDetail | ReasoningEncryptedDetail | ReasoningTextDetail;
 
-/**
- * Thinking configuration for Zai provider
- */
-export interface ThinkingConfig {
-	type?: string;
-}
+
 
 /**
  * Retry configuration for rate limiting

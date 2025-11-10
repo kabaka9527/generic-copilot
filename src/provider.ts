@@ -9,7 +9,7 @@ import {
 	Progress,
 } from "vscode";
 
-import type { ModelItem, ReasoningDetail, ReasoningSummaryDetail, ReasoningTextDetail, ReasoningConfig, ProviderConfig } from "./types";
+import type { ModelItem, ReasoningDetail, ReasoningSummaryDetail, ReasoningTextDetail, ProviderConfig } from "./types";
 
 import {
 	convertTools,
@@ -20,8 +20,6 @@ import {
 	createRetryConfig,
 	executeWithRetry,
 	resolveModelWithProvider,
-	getModelParameters,
-	getModelProperties,
 	processHeaders,
 } from "./utils";
 
@@ -193,7 +191,7 @@ export class ChatModelProvider implements LanguageModelChatProvider {
 			}
 
 			const getDeclaredProviderKey = (m: ModelItem): string | undefined => {
-				const props = getModelProperties(m);
+				const props = m.model_properties;
 				return (m.provider ?? props.owned_by)?.toLowerCase();
 			};
 
@@ -228,7 +226,7 @@ export class ChatModelProvider implements LanguageModelChatProvider {
 			const resolvedModel = um ? resolveModelWithProvider(um) : um;
 
 			// Get model properties using helper function
-			const modelProps = resolvedModel ? getModelProperties(resolvedModel) : undefined;
+			const modelProps = resolvedModel ? resolvedModel.model_properties : undefined;
 
 			// Get API key for the model's provider (provider-level keys only)
 			const providerKey = modelProps?.owned_by;
@@ -336,103 +334,31 @@ export class ChatModelProvider implements LanguageModelChatProvider {
 	}
 
 	private prepareRequestBody(
-		rb: Record<string, unknown>,
-		um: ModelItem | undefined,
+		requestBody: Record<string, unknown>,
+		modelItem: ModelItem | undefined,
 		options: ProvideLanguageModelChatResponseOptions
 	) {
 		// If no model config, apply defaults from options
-		if (!um) {
-			const oTemperature = options.modelOptions?.temperature ?? 0;
-			rb.temperature = oTemperature;
-			const oTopP = options.modelOptions?.top_p ?? 1;
-			rb.top_p = oTopP;
-			return rb;
+		if (!modelItem) {
+			throw new Error("Model configuration not found for request");
 		}
 
-		// Get model parameters using helper function (supports both flat and grouped structures)
-		const params = getModelParameters(um);
+		// Get model parameters using helper function
+		const params = modelItem.model_parameters;
 
-		// temperature
-		const oTemperature = options.modelOptions?.temperature ?? 0;
-		const temperature = params.temperature ?? oTemperature;
-		rb.temperature = temperature;
-
-		// top_p
-		const oTopP = options.modelOptions?.top_p ?? 0.9;
-		const topP = params.top_p ?? oTopP;
-		rb.top_p = topP;
-
-		if (params.top_p === null) {
-			delete rb.top_p;
-		}
-
-		// If user model config explicitly sets sampling params to null, remove them so provider defaults apply
 		if (params.temperature === null) {
-			delete rb.temperature;
-		}
-
-		// max_tokens
-		if (params.max_tokens !== undefined) {
-			rb.max_tokens = params.max_tokens;
-		}
-
-		// max_completion_tokens (OpenAI new standard parameter)
-		if (params.max_completion_tokens !== undefined) {
-			rb.max_completion_tokens = params.max_completion_tokens;
-		}
-
-		// OpenAI reasoning configuration
-		if (params.reasoning_effort !== undefined) {
-			rb.reasoning_effort = params.reasoning_effort;
-		}
-
-		if (params.thinking_budget !== undefined) {
-			rb.thinking_budget = params.thinking_budget;
-		}
-
-
-		// thinking (Zai provider)
-		if (params.thinking?.type !== undefined) {
-			rb.thinking = {
-				type: params.thinking.type,
-			};
-		}
-
-		// OpenRouter reasoning configuration
-		if (params.reasoning !== undefined) {
-			const reasoningConfig: ReasoningConfig = params.reasoning as ReasoningConfig;
-			if (reasoningConfig.enabled !== false) {
-				const reasoningObj: Record<string, unknown> = {};
-				const effort = reasoningConfig.effort;
-				const maxTokensReasoning = reasoningConfig.max_tokens || 2000; // Default 2000 as per docs
-				if (effort && effort !== "auto") {
-					reasoningObj.effort = effort;
-				} else {
-					// If auto or unspecified, use max_tokens (Anthropic-style fallback)
-					reasoningObj.max_tokens = maxTokensReasoning;
-				}
-				if (reasoningConfig.exclude !== undefined) {
-					reasoningObj.exclude = reasoningConfig.exclude;
-				}
-				rb.reasoning = reasoningObj;
-			}
-		}
-
-		// stop
-		if (options.modelOptions) {
-			const mo = options.modelOptions as Record<string, unknown>;
-			if (typeof mo.stop === "string" || Array.isArray(mo.stop)) {
-				rb.stop = mo.stop;
-			}
+			delete requestBody.temperature;
+		} else {
+			requestBody.temperature = params.temperature;
 		}
 
 		// tools
 		const toolConfig = convertTools(options);
 		if (toolConfig.tools) {
-			rb.tools = toolConfig.tools;
+			requestBody.tools = toolConfig.tools;
 		}
 		if (toolConfig.tool_choice) {
-			rb.tool_choice = toolConfig.tool_choice;
+			requestBody.tool_choice = toolConfig.tool_choice;
 		}
 
 
@@ -442,12 +368,12 @@ export class ChatModelProvider implements LanguageModelChatProvider {
 			// Add all extra parameters directly to the request body
 			for (const [key, value] of Object.entries(params.extra)) {
 				if (value !== undefined) {
-					rb[key] = value;
+					requestBody[key] = value;
 				}
 			}
 		}
 
-		return rb;
+		return requestBody;
 	}
 
 	/**

@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import type { ModelProperties, ProviderConfig } from '../../../src/types';
-import { prettyJson, tryParseJson, parseIntOrUndef } from '../utils';
+import { parseIntOrUndef } from '../utils';
 import {
     VscodeTextfield,
-    VscodeTextarea,
-    VscodeSingleSelect,
-    VscodeOption,
     VscodeFormHelper,
 } from '@vscode-elements/react-elements';
 
@@ -16,7 +13,7 @@ export interface ModelPropertiesProps {
     onChange: (field: keyof ModelProperties, value: any) => void;
 }
 
-const ModelPropertiesForm: React.FC<ModelPropertiesProps> = ({ value, providers, onChange }) => {
+const ModelPropertiesForm: React.FC<ModelPropertiesProps> = ({ value, onChange }) => {
     const update = (field: keyof ModelProperties, v: any) => {
         if (v === '' || (typeof v === 'number' && Number.isNaN(v))) {
             onChange(field, undefined);
@@ -24,12 +21,6 @@ const ModelPropertiesForm: React.FC<ModelPropertiesProps> = ({ value, providers,
             onChange(field, v);
         }
     };
-
-    const providerOptions = providers.map((p) => (
-        <VscodeOption key={p.key} value={p.key}>
-            {p.displayName || p.key}
-        </VscodeOption>
-    ));
 
     return (
         <div className="collapsible-content">

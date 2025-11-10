@@ -532,7 +532,6 @@ suite('ChatModelProvider Test Suite', () => {
                     owned_by: 'test',
                 },
                 model_parameters: {
-                    max_tokens: 2048,
                 }
             }];
 
