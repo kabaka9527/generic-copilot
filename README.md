@@ -12,9 +12,8 @@ Heavily inspired (and then extended) by https://github.com/JohnnyZ93/oai-compati
 - **Provider-First Configuration**: Define providers once with shared settings (baseUrl, headers, API keys) that are automatically inherited by models
 - **Multiple Provider Support**: Manage API keys for unlimited providers with automatic per-provider key storage
 - **Multiple Configurations per Model**: Define the same model with different settings using `configId` (e.g., thinking vs. no-thinking modes)
-- **Thinking & Reasoning**: Control display of model reasoning processes with support for OpenRouter, Zai, and other provider formats
 - **Auto-Retry**: Built-in retry mechanism for handling API errors (429, 500, 502, 503, 504)
-- **Flexible Headers & parameters**: Inherit custom headers from providers or override per-model.  Set custom parameters for any model.
+- **Flexible Headers & parameters**: Set custom parameters for any model.
 
 ---
 
@@ -51,6 +50,8 @@ Heavily inspired (and then extended) by https://github.com/JohnnyZ93/oai-compati
 
 
 ### 2. Set API Keys
+
+If an API key is not found for a provider, you will be prompted in the QuickPick box.
 
 1. Open Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
 2. Run: **"GenericCopilot: Set Generic Compatible Multi-Provider Apikey"**
@@ -117,12 +118,6 @@ Models define the specific LLMs you want to use. Each model must be associated w
 | Field                   | Type     | Description                                                                                                                            |
 |-------------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------|
 | `temperature`           | `number` | Controls randomness. Lower values are more deterministic. Range: `[0, 2]`. Defaults to `1`.                                            |
-| `max_tokens`            | `number` | The maximum number of tokens to generate. Defaults to `4096`.                                                                          |
-| `max_completion_tokens` | `number` | A newer OpenAI parameter for maximum tokens. Use this if your provider supports it.                                                    |
-| `reasoning_effort`      | `string` | For OpenAI models, controls reasoning level. Can be `minimal`, `low`, `medium`, `high`.                                                  |
-| `thinking`              | `object` | For Zai-compatible providers, enables chain-of-thought reasoning. Example: `{ "type": "enabled" }`.                                      |
-| `thinking_budget`       | `number` | The token budget for `thinking`.                                                                                                       |
-| `reasoning`             | `object` | For OpenRouter-compatible providers, controls reasoning. See `package.json` for the full schema.                                       |
 | `extra`                 | `object` | A container for any other parameters you want to send to the API. These are passed through directly.                                   |
 
 ---
@@ -158,7 +153,6 @@ Here is a complete example for your `settings.json` file, demonstrating how to c
         "family": "claude"
       },
       "model_parameters": {
-        "max_tokens": 8192,
         "temperature": 0.7
       }
     },
@@ -173,9 +167,6 @@ Here is a complete example for your `settings.json` file, demonstrating how to c
       },
       "model_parameters": {
         "temperature": 0.8,
-        "thinking": {
-          "type": "enabled"
-        }
       }
     },
     {
@@ -217,27 +208,7 @@ Each provider has its own API key stored securely:
 - **Storage Key**: `generic-copilot.apiKey.<provider-key>`
 - **Example**: For provider `key: "iflow"`, the storage key is `generic-copilot.apiKey.iflow`
 
-### Setting Keys
 
-**Via Command Palette:**
-
-1. `Ctrl+Shift+P` (or `Cmd+Shift+P`)
-2. **"GenericCopilot: Set Generic Compatible Multi-Provider Apikey"**
-3. Select provider from list
-4. Enter API key (or clear by leaving empty)
-
-**Automatic Prompting:**
-
-If a model is selected without an API key configured, you'll be prompted to enter one when making your first request.
-
-### Key Resolution
-
-When making a request:
-
-1. Check for provider-specific key: `generic-copilot.apiKey.<provider-key>`
-2. If not found and no custom `Authorization` header is set, the request proceeds without authentication (some providers allow this)
-
----
 
 ## 🎛️ Advanced Configuration
 
@@ -245,12 +216,6 @@ When making a request:
 
 Headers can be set at the provider level and will be inherited by all models associated with that provider. See the `Provider Configuration` section for details.
 
-
-
-
-### Thinking & Reasoning Models
-
-Refer to the `model_parameters` schema in the Configuration Guide for details on how to configure thinking and reasoning.
 
 ### API Request Format
 
@@ -297,7 +262,7 @@ Add fixed delay between consecutive requests:
 * gpt-5-codex | gpt-5-codex : uses Codex-style prompt branch
 * gpt-5* | gpt-5 : can use apply_patch exclusively; agent prompts differ for gpt-5
 * o4-mini | o4-mini : allowed apply_patch and prefers JSON notebook representation
-c* laude-3.5-sonnet | claude-3.5-sonnet : prefers instructions in user message and after history
+* claude-3.5-sonnet | claude-3.5-sonnet : prefers instructions in user message and after history
 
 #### Family Name variations
 * GPT family | gpt (excl. gpt-4o) : supports apply_patch, prefers JSON notebook representation
@@ -305,9 +270,6 @@ c* laude-3.5-sonnet | claude-3.5-sonnet : prefers instructions in user message a
 * Gemini | gemini : supports replace_string, healing/strong-replace hints required, cannot accept image_url in requests
 * Grok | grok-code : supports replace_string and can use replace_string exclusively
 
-### Organize by Provider
-
-Group models by provider to make configuration easier to manage. Providers define shared baseUrl, headers, and API keys that all their models automatically inherit.
 
 ### Naming Convention
 
@@ -355,7 +317,6 @@ If a provider uses non-standard authentication, set it in the `headers` object o
 Use `configId` to disambiguate models with the same `id`. See the Configuration Example for a demonstration.
 
 ---
-
 
 ## 📄 License
 
