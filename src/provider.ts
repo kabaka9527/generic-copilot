@@ -137,7 +137,7 @@ export class ChatModelProvider implements LanguageModelChatProvider {
 	 */
 	async provideTokenCount(
 		model: LanguageModelChatInformation,
-		text: string | LanguageModelChatRequestMessage,
+		text: LanguageModelChatRequestMessage,
 		_token: CancellationToken
 	): Promise<number> {
 		try {
@@ -898,7 +898,7 @@ export class ChatModelProvider implements LanguageModelChatProvider {
 		const displayText = `$(symbol-parameter) ${progressBar}`;
 		console.log(displayText)
 		this.statusBarItem.text = displayText;
-		this.statusBarItem.tooltip = `Token Usage: ${this.formatTokenCount(totalTokenCount)} / ${this.formatTokenCount(maxTokens)}\n\n${progressBar}\n\nClick to open configuration`;
+		this.statusBarItem.tooltip = `Token Usage: ${totalTokenCount} / ${this.formatTokenCount(maxTokens)}\n\n${progressBar}\n\nClick to open configuration`;
 
 		// Add color coding based on token usage
 		const usagePercentage = (totalTokenCount / maxTokens) * 100;
