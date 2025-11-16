@@ -5,7 +5,7 @@ import type { ModelItem, ProviderConfig } from "./types";
 import { resolveModelWithProvider } from "./utils";
 
 const DEFAULT_CONTEXT_LENGTH = 128000;
-const DEFAULT_MAX_TOKENS = 32000;
+const DEFAULT_MAX_TOKENS = 8000;
 
 /**
  * Get the list of available language models contributed by this provider
