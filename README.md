@@ -11,7 +11,6 @@ Heavily inspired (and then extended) by https://github.com/JohnnyZ93/oai-compati
 - **Configuration GUI**: Intuitive webview-based interface for managing providers and models with validation and error handling.  Access this with the quick picker entry "GenericCopilot: Open Configuration GUI"
 - **Provider-First Configuration**: Define providers once with shared settings (baseUrl, headers, API keys) that are automatically inherited by models
 - **Multiple Provider Support**: Manage API keys for unlimited providers with automatic per-provider key storage using vscode secret storage.
-- **Multiple Configurations per Model**: Define the same model with different settings using `configId` (e.g., thinking vs. no-thinking modes)
 - **Flexible Headers & parameters**: Set custom parameters for any model.
 
 ---
@@ -21,6 +20,8 @@ Heavily inspired (and then extended) by https://github.com/JohnnyZ93/oai-compati
 - **VS Code**: 1.105.0 or higher
 - **Dependency**: GitHub Copilot Chat extension
 - **API Keys**: OpenAI-compatible provider API keys
+
+- **Supported Vercel AI SDK Providers**: This extension currently supports the following provider types: `openai`, `openai-compatible`, and `openrouter`.
 
 ---
 
@@ -37,7 +38,7 @@ Heavily inspired (and then extended) by https://github.com/JohnnyZ93/oai-compati
 
 2. **Add Providers**:
    - Click "+ Add Provider"
-   - Enter provider key (e.g., "iflow") and base URL
+   - Enter provider id (e.g., "iflow") and base URL
    - Optionally configure default parameters
 
 3. **Add Models**:
@@ -84,7 +85,8 @@ Providers define the connection details for an API endpoint. Models reference a 
 
 | Field         | Type     | Required | Description                                                                    |
 |---------------|----------|----------|--------------------------------------------------------------------------------|
-| `key`         | `string` | Yes      | A unique, lowercase identifier for the provider (e.g., "openrouter", "zai").   |
+| `id`         | `string` | Yes      | A unique, lowercase identifier for the provider (e.g., "openrouter", "zai").   |
+| `type`        | `string` | Yes      | The provider type. Must be one of `openai`, `openai-compatible`, or `openrouter`. |
 | `displayName` | `string` | No       | A user-friendly name for the provider that appears in the UI.                  |
 | `baseUrl`     | `string` | Yes      | The base URL of the provider's API endpoint (e.g., "https://api.example.com/v1"). |
 | `headers`     | `object` | No       | Custom HTTP headers to be sent with every request to this provider.            |
@@ -97,10 +99,10 @@ Models define the specific LLMs you want to use. Each model must be associated w
 
 | Field                | Type     | Required | Description                                                                                                                             |
 |----------------------|----------|----------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `id`                 | `string` | Yes      | The model identifier that will be sent to the provider's API (e.g., "anthropic/claude-3.5-sonnet").                                       |
-| `provider`           | `string` | Yes      | The `key` of a configured provider. The model will inherit `baseUrl` and `headers` from this provider.                                    |
-| `displayName`        | `string` | No       | A user-friendly name for the model. If not set, a name is generated from `id` and `configId`.                                           |
-| `configId`           | `string` | No       | An identifier to create multiple configurations for the same `id`. The final model name will be `id::configId`.                           |
+| `id`                 | `string` | Yes      | The internal unique identifier.                                       |
+| `provider`           | `string` | Yes      | The `id` of a configured provider. The model will inherit `baseUrl` and `headers` from this provider.                                    |
+| `slug`               | `string` | Yes      | The actual model value that will be sent to the inference provider.                     |
+| `displayName`        | `string` | No       | A user-friendly name for the model. If not set, a name is generated from `id` and `slug`.                                           |
 | `model_properties`   | `object` | No       | Internal metadata used by the extension to control behavior. These are **not** sent to the provider's API.                              |
 | `model_parameters`   | `object` | No       | Parameters that are sent in the body of the request to the provider's API.                                                              |
 
@@ -109,7 +111,7 @@ Models define the specific LLMs you want to use. Each model must be associated w
 | Field            | Type     | Description                                                                                             |
 |------------------|----------|---------------------------------------------------------------------------------------------------------|
 | `context_length` | `number` | The maximum context window size for the model. Defaults to `128000`.                                    |
-| `owned_by`       | `string` | The provider name. This is typically inherited from the provider's `key` and doesn't need to be set manually. |
+| `owned_by`       | `string` | The provider name. This is typically inherited from the provider's `id` and doesn't need to be set manually. |
 | `family`         | `string` | The model family (e.g., "gpt", "claude", "gemini"). Affects how Copilot interacts with the model. Defaults to "generic". |
 
 #### `model_parameters` Schema
@@ -129,12 +131,14 @@ Here is a complete example for your `settings.json` file, demonstrating how to c
 {
   "generic-copilot.providers": [
     {
-      "key": "openrouter",
+      "id": "openrouter-connection",
+      "type": "openrouter",
       "displayName": "OpenRouter",
       "baseUrl": "https://openrouter.ai/api/v1"
     },
     {
-      "key": "zai",
+      "id": "zai",
+      "type": "openai-compatible",
       "displayName": "Zai",
       "baseUrl": "https://open.zaidata.com/v1",
       "headers": {
@@ -145,6 +149,7 @@ Here is a complete example for your `settings.json` file, demonstrating how to c
   "generic-copilot.models": [
     {
       "_comment": "A simple model configuration inheriting from OpenRouter.",
+      "slug": "claude-sonnet-default",
       "id": "anthropic/claude-3.5-sonnet",
       "provider": "openrouter",
       "model_properties": {
@@ -156,22 +161,9 @@ Here is a complete example for your `settings.json` file, demonstrating how to c
       }
     },
     {
-      "_comment": "A model with two different configurations using configId.",
+      "slug": "glm-4.6-fast",
       "id": "glm-4.6",
       "provider": "zai",
-      "configId": "thinking",
-      "displayName": "GLM-4.6 (Thinking)",
-      "model_properties": {
-        "context_length": 256000
-      },
-      "model_parameters": {
-        "temperature": 0.8,
-      }
-    },
-    {
-      "id": "glm-4.6",
-      "provider": "zai",
-      "configId": "fast",
       "displayName": "GLM-4.6 (Fast)",
       "model_properties": {
         "context_length": 256000
@@ -182,6 +174,7 @@ Here is a complete example for your `settings.json` file, demonstrating how to c
     },
     {
       "_comment": "A model with custom parameters passed via the 'extra' field.",
+      "slug": "gemini-flash-custom",
       "id": "google/gemini-flash-1.5",
       "provider": "openrouter",
       "model_parameters": {
@@ -278,14 +271,10 @@ If a provider uses non-standard authentication, set it in the `headers` object o
 
 ### Provider Not Found
 
-1. Confirm `provider` field in your model configuration matches a provider's `key` exactly (case-sensitive).
+1. Confirm `provider` field in your model configuration matches a provider's `id` exactly (case-sensitive).
 2. Check Developer Console for warnings about missing providers.
 3. Verify JSON syntax is valid (no trailing commas, quotes closed).
 4. Remember: Only `baseUrl` and `headers` are inherited from providers.
-
-### Duplicate Model IDs
-
-Use `configId` to disambiguate models with the same `id`. See the Configuration Example for a demonstration.
 
 ---
 
