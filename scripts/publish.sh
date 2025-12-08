@@ -50,7 +50,7 @@ echo "Ready to publish version $NEW_VERSION to VS Code Marketplace."
 read -p "Continue with publish? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    npx vsce publish --packagePath "$VSIX_FILE" --allow-all-proposed-apis
+    npx vsce publish --packagePath "$VSIX_FILE" --allow-all-proposed-apis --skip-duplicate
 else
     echo "Skipping Marketplace publication."
 fi
