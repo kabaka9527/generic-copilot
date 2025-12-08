@@ -86,7 +86,7 @@ Providers define the connection details for an API endpoint. Models reference a 
 | Field         | Type     | Required | Description                                                                    |
 |---------------|----------|----------|--------------------------------------------------------------------------------|
 | `id`         | `string` | Yes      | A unique, lowercase identifier for the provider (e.g., "openrouter", "zai").   |
-| `type`        | `string` | Yes      | The provider type. Must be one of `openai`, `openai-compatible`, `openrouter`, or `google`. |
+| `vercelType`        | `string` | Yes      | The provider type. Must be one of `openai`, `openai-compatible`, `openrouter`, or `google`. |
 | `displayName` | `string` | No       | A user-friendly name for the provider that appears in the UI.                  |
 | `baseUrl`     | `string` | Yes      | The base URL of the provider's API endpoint (e.g., "https://api.example.com/v1"). |
 | `headers`     | `object` | No       | Custom HTTP headers to be sent with every request to this provider.            |
@@ -132,13 +132,12 @@ Here is a complete example for your `settings.json` file, demonstrating how to c
   "generic-copilot.providers": [
     {
       "id": "openrouter-connection",
-      "type": "openrouter",
+      "vercelType": "openrouter",
       "displayName": "OpenRouter",
-      "baseUrl": "https://openrouter.ai/api/v1"
     },
     {
       "id": "zai",
-      "type": "openai-compatible",
+      "vercelType": "openai-compatible",
       "displayName": "Zai",
       "baseUrl": "https://open.zaidata.com/v1",
       "headers": {
@@ -260,7 +259,7 @@ Gemini 3 models (e.g. Gemini 3 Pro) introduce a requirement for preserving "thou
 This extension implements automated handling of these signatures **only when using the `google` provider type**.
 
 To properly support Gemini 3:
-1. Use `type: "google"` for your provider configuration.
+1. Use `vercelType: "google"` for your provider configuration.
 2. Ensure your model `family` is set to `"gemini"`.
 
 ---
