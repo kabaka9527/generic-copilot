@@ -4,12 +4,6 @@ set -e
 # Ensure we are in the project root
 cd "$(dirname "$0")/.."
 
-# Check for gh CLI
-if ! command -v gh &> /dev/null; then
-    echo "Error: GitHub CLI (gh) is not installed. Please install it to create GitHub releases."
-    exit 1
-fi
-
 # Check for git
 if ! command -v git &> /dev/null; then
     echo "Error: git is not installed."
@@ -33,8 +27,8 @@ echo "Preparing release v$NEW_VERSION..."
 # Update version in package.json and package-lock.json without creating a git tag yet
 npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
 
-# Compile and package
-echo "Building extension package..."
+# Compile and package (Local build for verification)
+echo "Building extension package locally..."
 npm run package
 
 VSIX_FILE="generic-copilot.vsix"
@@ -44,16 +38,7 @@ if [ ! -f "$VSIX_FILE" ]; then
     exit 1
 fi
 
-# Publish to VS Code Marketplace
-echo "--------------------------------------------------"
-echo "Ready to publish version $NEW_VERSION to VS Code Marketplace."
-read -p "Continue with publish? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    npx vsce publish --packagePath "$VSIX_FILE" --allow-all-proposed-apis --skip-duplicate
-else
-    echo "Skipping Marketplace publication."
-fi
+echo "Local VSIX built successfully: $VSIX_FILE"
 
 # Git operations
 echo "--------------------------------------------------"
@@ -65,15 +50,9 @@ git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
 echo "Pushing changes and tags to GitHub..."
 git push origin HEAD --follow-tags
 
-# GitHub Release
 echo "--------------------------------------------------"
-echo "Creating GitHub release v$NEW_VERSION..."
-if gh release create "v$NEW_VERSION" "$VSIX_FILE" --title "v$NEW_VERSION" --generate-notes; then
-    echo "GitHub release created successfully."
-else
-    echo "Error creating GitHub release."
-    # Don't exit here, as the critical parts (publish, push) are done
-fi
-
-echo "--------------------------------------------------"
-echo "Release v$NEW_VERSION completed successfully!"
+echo "Release v$NEW_VERSION tag pushed!"
+echo "GitHub Actions will now:"
+echo "1. Build the release again in CI"
+echo "2. Publish to VS Code Marketplace"
+echo "3. Create a GitHub Release"
