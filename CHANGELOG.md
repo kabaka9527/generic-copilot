@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.13.0] - 2025-12-09
+
+- Supress test dir from compiulation. (590a276)
+- feat: add inline completion support and configuration for autocomplete models (#23) (68b9b6e)
+- Update README.md (9e83a3d)
+
+
 ## [v0.12.3] - 2025-12-08
 
 - Add output logging functionality across various modules (#22) (0c973b6)
