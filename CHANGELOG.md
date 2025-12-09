@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.12.3] - 2025-12-08
+
+- Add output logging functionality across various modules (#22) (0c973b6)
+- Update release instructions (7a1d7a6)
+- Logo updates (052ae7d)
+- Description change (ff73332)
+- Improve changelog generation (d6edbfe)
+
+
 ## Gemini 3 and earlier Support - v0.12.0
 
 Fully supports Gemini models via the generative language APIs (aka AI Studio, not Vertex, and not via the OpenAI endpoint). Includes support for maintining thought signatures during execution for maximum performance. Tested with dozens of back to back calls, and at least 9 parallel tool calls!
