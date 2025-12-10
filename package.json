@@ -251,6 +251,6 @@
 		"@openrouter/ai-sdk-provider": "^1.4.0",
 		"ai": "^5.0.107",
 		"openai": "^6.9.1",
-		"tiktoken": "^1.0.22"
+		"tokenx": "^1.2.1"
 	}
 }

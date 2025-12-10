@@ -48,7 +48,7 @@ function setupDevAutoRestart(context: vscode.ExtensionContext) {
 
 export function activate(context: vscode.ExtensionContext) {
 	// Build a descriptive User-Agent to help quantify API usage.  Who knows why.
-	const ext = vscode.extensions.getExtension("generic-copilot-providers");
+	const ext = vscode.extensions.getExtension("generic-copilot");
 	const extVersion = ext?.packageJSON?.version ?? "unknown";
 	const vscodeVersion = vscode.version;
 	// Keep UA minimal: only extension version and VS Code version
