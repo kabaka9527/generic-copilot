@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.13.4] - 2025-12-09
+
+- Add thoughts output for google models (#28) (25d8bd1)
+- Enable retries for failed requests with improved error handling (#27) (993aa04)
+
+
 ## [v0.13.2] - 2025-12-09
 
 - Refactored provider 'key' to 'id' to be slightly less confusing (#25) (724e932)
