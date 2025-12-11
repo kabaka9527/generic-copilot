@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.14.0] - 2025-12-11
+
+- Enhance metadata caching and add previousResponseId support (#37) (0ba3209)
+- Enhance OpenAIProviderClient: add providerOptions for detailed summaries and extended prompt caching to generateStreamingResponse for improved configuration handling (#36) (fba3008)
+- Refactor code generation logic: replace 'generateObject' with 'generateText' and enhance completion system instruction for clarity. Improve handling of empty insert text cases in inline completion items. (41dc0b2)
+
+
 ## [v0.13.5] - 2025-12-09
 
 - Add performance metrics to response logging and status bar updates (50a2fda)
