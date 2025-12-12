@@ -273,8 +273,10 @@
 		"@ai-sdk/google": "^2.0.44",
 		"@ai-sdk/openai": "^2.0.77",
 		"@ai-sdk/openai-compatible": "^1.0.28",
+		"@anthropic-ai/claude-agent-sdk": "^0.1.67",
 		"@openrouter/ai-sdk-provider": "^1.4.0",
 		"ai": "^5.0.107",
+		"ai-sdk-provider-claude-code": "^2.2.4",
 		"openai": "^6.9.1",
 		"tokenx": "^1.2.1"
 	}
