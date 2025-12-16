@@ -8,6 +8,8 @@
 
 深受 https://github.com/JohnnyZ93/oai-compatible-copilot 的启发（并进行了扩展）
 
+原仓库 https://github.com/mcowger/generic-copilot
+
 ## 贡献与 PR
 
 ...[非常欢迎！](https://github.com/mcowger/generic-copilot)
