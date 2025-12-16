@@ -18,7 +18,7 @@ export class ConfigurationPanel {
 
 		const panel = vscode.window.createWebviewPanel(
 			"genericCopilotConfig",
-			"Generic Copilot Configuration",
+			vscode.l10n.t("configuration.title"),
 			column || vscode.ViewColumn.One,
 			{
 				enableScripts: true,
@@ -104,6 +104,8 @@ export class ConfigurationPanel {
 			command: "loadConfiguration",
 			providers,
 			models,
+			// Pass the current VS Code language
+			vscodeLanguage: vscode.env.language,
 		});
 	}
 

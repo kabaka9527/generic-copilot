@@ -1,0 +1,89 @@
+body {
+  padding: 10px;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  color: var(--vscode-foreground);
+}
+
+.p-5 {
+  padding: 1.25rem;
+}
+
+h1 {
+  margin-top: 0;
+  color: var(--vscode-foreground);
+}
+
+.section {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.item {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--vscode-dropdown-border);
+  border-radius: 4px;
+  background: var(--vscode-editor-background);
+}
+
+.item-list {
+  margin-top: 12px;
+}
+
+.form-field {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.empty-state {
+  padding: 20px;
+  text-align: center;
+  color: var(--vscode-descriptionForeground);
+  background: var(--vscode-textBlockQuote-background);
+  border-radius: 4px;
+  margin-top: 12px;
+}
+
+.collapsible-content {
+  padding: 12px;
+}
+
+.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  background: var(--vscode-editor-background);
+  border-top: 1px solid var(--vscode-dropdown-border);
+  padding: 12px 0;
+  z-index: 10;
+}
+
+.save-section {
+  display: flex;
+  gap: 8px;
+}
+
+/* Rounder edges for delete buttons */
+vscode-button[secondary] {
+  border-radius: 8px !important;
+}
+
+/* More specific rule for delete buttons */
+.item vscode-button[secondary] {
+  border-radius: 8px !important;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: var(--vscode-editor-background);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background: var(--vscode-editor-background);
+  }
+}

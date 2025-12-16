@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import ConsoleApp from './components/console/ConsoleApp';
+import './i18n';
 
 const rootEl = document.getElementById('root');
 const consoleRoot = document.getElementById('console-root');

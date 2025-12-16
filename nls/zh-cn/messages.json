@@ -1,0 +1,69 @@
+{
+  "generic-copilot.openConfiguration": "GenericCopilot：打开配置界面",
+  "generic-copilot.setProviderApikey": "GenericCopilot：设置通用兼容多提供商API密钥",
+  "generic-copilot.refresh": "GenericCopilot：刷新模型配置",
+  "generic-copilot.consoleView.title": "LLM控制台",
+  "generic-copilot.modelManagement.title": "模型管理",
+  "error.noProvidersFound": "在generic-copilot.models或generic-copilot.providers配置中未找到提供商。请先配置提供商或模型。",
+  "dialog.selectProvider": "选择提供商",
+  "dialog.selectProvider.placeHolder": "选择一个提供商来配置API密钥",
+  "dialog.providerApiKey.title": "Generic兼容API密钥 - {provider}",
+  "dialog.providerApiKey.updatePrompt": "更新{provider}的API密钥",
+  "dialog.providerApiKey.enterPrompt": "输入{provider}的API密钥",
+  "dialog.apiKeyClear.success": "已清除{provider}的API密钥。",
+  "dialog.apiKeySave.success": "已保存{provider}的API密钥。",
+  "button.configuration": "配置",
+  "button.save": "保存",
+  "button.cancel": "取消",
+  "message.modelConfigurationsRefreshed": "GenericCopilot模型配置已刷新。",
+  "message.failedToRefreshModels": "无法刷新GenericCopilot模型：{error}",
+  "statusBar.ready": "$(symbol-numeric) 就绪",
+  "statusBar.tokenCount": "当前模型令牌使用情况 - 点击打开配置",
+  "console.clear": "清除",
+  "console.export": "导出",
+  "configuration.title": "Generic兼容Copilot",
+  "configuration.providers": {
+    "description": "提供商列表。模型可以引用提供商以继承baseUrl。使用配置界面或在settings.json中编辑。",
+    "properties": {
+      "id": "规范提供商ID（小写，用作owned_by和API密钥存储）。",
+      "displayName": "（可选）提供商的显示名称。",
+      "baseUrl": "（可选）提供商API端点的基础URL。覆盖内置默认值。",
+      "headers": "（可选）在对此提供商的请求中包含的自定义HTTP标头。",
+      "vercelType": "（必需）Vercel提供商的类型。",
+      "providerSpecificOptions": "（可选）提供商特定选项作为JSON对象。用于提供商特定配置（例如，claude-code提供商的pathToClaudeCodeExecutable、permissionMode）。"
+    }
+  },
+  "configuration.models": {
+    "description": "模型列表。使用配置界面或在settings.json中编辑。",
+    "properties": {
+      "id": "模型ID（例如'glm-4.6'）。",
+      "slug": "（必需）提供商定义的模型slug（例如'gpt-4o'、'claude-3'）。",
+      "provider": "（必需）对提供商ID的引用。允许继承API密钥、baseURL和标头。",
+      "displayName": "（可选）模型的显示名称。",
+      "use_for_autocomplete": "（可选）是否为自动完成功能使用此模型。",
+      "retries": "（可选）失败请求的重试次数。默认为3。",
+      "model_properties": {
+        "description": "（可选）模型属性，包括context_length、family、owned_by等。",
+        "properties": {
+          "context_length": "模型支持的上下文长度。默认为128000。",
+          "owned_by": "（可选）模型提供商（例如'zai'、'openai'）。",
+          "family": "（可选）模型系列（例如'gpt-4'、'claude-3'、'gemini'）。启用特定于模型的优化和行为。如果未指定，默认为'generic'。"
+        }
+      },
+      "model_parameters": {
+        "description": "（可选）模型参数，包括temperature、max_tokens、reasoning设置等。",
+        "properties": {
+          "temperature": "采样温度（范围：[0, 2]）。较低的值使输出更确定性，较高的值使其更有创意。默认为1。",
+          "extra": "将在/chat/completions中使用的额外请求参数。"
+        }
+      }
+    }
+  },
+  "configuration.delay": "连续请求之间的固定延迟（毫秒）。默认为0（无延迟）。",
+  "configuration.enableExperimentalFeatures": "启用实验功能（示例复选框设置）。",
+  "configuration.logLevel": "为扩展设置日志级别（示例下拉菜单设置）。",
+  "configuration.logLevel.error": "仅显示错误",
+  "configuration.logLevel.warn": "显示警告和错误",
+  "configuration.logLevel.info": "显示信息性消息、警告和错误",
+  "configuration.logLevel.debug": "显示所有消息，包括调试信息"
+}

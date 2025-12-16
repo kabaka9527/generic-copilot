@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ProviderConfig } from '../../../src/types';
 import { prettyJson, tryParseJson, } from '../utils';
 import {
@@ -26,6 +27,7 @@ const ProviderItem: React.FC<{
   onUpdate: (next: ProviderConfig) => void;
   onRemove: () => void;
 }> = ({ provider, index, onUpdate, onRemove }) => {
+  const { t } = useTranslation();
   const updateField = (field: 'id' | 'displayName' | 'baseUrl' | 'vercelType', value: string) => {
     const next: ProviderConfig = { ...provider };
     const v = value === '' ? '' : value;
@@ -68,42 +70,42 @@ const ProviderItem: React.FC<{
 
   return (
     <div className="item">
-      <VscodeCollapsible heading={`Provider ${index + 1}${provider.displayName ? ` – ${provider.displayName}` : ''}`} alwaysShowHeaderActions>
+      <VscodeCollapsible heading={`${t('providers.provider')} ${index + 1}${provider.displayName ? ` – ${provider.displayName}` : ''}`} alwaysShowHeaderActions>
         <VscodeButton onClick={onRemove} secondary slot="actions">
-          Remove
+          {t('common.delete')}
         </VscodeButton>
         <div className="form-field">
-          <VscodeFormHelper>Identifier</VscodeFormHelper>
+          <VscodeFormHelper>{t('providers.id')}</VscodeFormHelper>
           <VscodeTextfield
             type="text"
             value={(provider.id as unknown as string) ?? ''}
-            placeholder="e.g., openai, anthropic"
+            placeholder={t('providers.idPlaceholder')}
             onInput={(e: any) => updateField('id', e.currentTarget.value)}
           >
           </VscodeTextfield>
           <VscodeFormHelper style={{ color: 'var(--vscode-errorForeground)', display: provider.id ? 'none' : 'block' }}>
-            Identifier is required.  Used for referencing this provider in models.
+            {t('providers.idRequired')}
           </VscodeFormHelper>
         </div>
 
         <div className="form-field">
-          <VscodeFormHelper>Vercel Type (required) *</VscodeFormHelper>
+          <VscodeFormHelper>{t('providers.vercelTypeLabel')}</VscodeFormHelper>
           <VscodeSingleSelect
             value={provider.vercelType ?? ''}
             onChange={(e: any) => updateField('vercelType', e.currentTarget.value)}
           >
-            <VscodeOption value="" disabled>Select a type</VscodeOption>
+            <VscodeOption value="" disabled>{t('providers.vercelTypePlaceholder')}</VscodeOption>
             {vercelTypes.map((t) => (
               <VscodeOption key={t} value={t}>{t}</VscodeOption>
             ))}
           </VscodeSingleSelect>
           <VscodeFormHelper style={{ color: 'var(--vscode-errorForeground)', display: provider.vercelType ? 'none' : 'block' }}>
-            Vercel Type is required!
+            {t('providers.vercelTypeRequired')}
           </VscodeFormHelper>
         </div>
 
         <div className="form-field">
-          <VscodeFormHelper>Display Name</VscodeFormHelper>
+          <VscodeFormHelper>{t('providers.displayName')}</VscodeFormHelper>
           <VscodeTextfield
             type="text"
             value={(provider.displayName as unknown as string) ?? ''}
@@ -113,38 +115,38 @@ const ProviderItem: React.FC<{
         </div>
 
         <div className="form-field">
-          <VscodeFormHelper>Base URL (optional override)</VscodeFormHelper>
+          <VscodeFormHelper>{t('providers.baseUrl')}</VscodeFormHelper>
           <VscodeTextfield
             type="text"
             value={(provider.baseUrl as unknown as string) ?? ''}
-            placeholder="e.g., https://api.openai.com/v1"
+            placeholder={t('providers.baseUrlPlaceholder')}
             onInput={(e: any) => updateField('baseUrl', e.currentTarget.value)}
           >
           </VscodeTextfield>
         </div>
 
         <div className="form-field">
-          <VscodeFormHelper>Headers (JSON)</VscodeFormHelper>
+          <VscodeFormHelper>{t('providers.headers')}</VscodeFormHelper>
           <VscodeTextarea
             rows={3 as any}
-            placeholder='{"X-Custom-Header":"value"}'
+            placeholder={t('providers.headersPlaceholder')}
             value={prettyJson(provider.headers)}
             onInput={(e: any) => updateHeaders(e.currentTarget.value)}
           >
           </VscodeTextarea>
-          <VscodeFormHelper>Custom headers for this provider (JSON object)</VscodeFormHelper>
+          <VscodeFormHelper>{t('providers.headersDescription')}</VscodeFormHelper>
         </div>
 
         <div className="form-field">
-          <VscodeFormHelper>Provider-Specific Options (JSON)</VscodeFormHelper>
+          <VscodeFormHelper>{t('providers.providerSpecificOptions')}</VscodeFormHelper>
           <VscodeTextarea
             rows={3 as any}
-            placeholder='{"pathToClaudeCodeExecutable":"/path/to/claude","permissionMode":"bypassPermissions"}'
+            placeholder={t('providers.providerSpecificOptionsPlaceholder')}
             value={prettyJson(provider.providerSpecificOptions)}
             onInput={(e: any) => updateProviderSpecificOptions(e.currentTarget.value)}
           >
           </VscodeTextarea>
-          <VscodeFormHelper>Provider-specific configuration options (JSON object). Used for provider-specific settings like claude-code paths or permission modes.</VscodeFormHelper>
+          <VscodeFormHelper>{t('providers.providerSpecificOptionsDescription')}</VscodeFormHelper>
         </div>
 
 
@@ -156,6 +158,7 @@ const ProviderItem: React.FC<{
 };
 
 export const Providers: React.FC<ProvidersProps> = ({ providers, onChange }) => {
+  const { t } = useTranslation();
   const addProvider = () => {
     const next: ProviderConfig = { id: '', baseUrl: '', displayName: '', vercelType: 'openai-compatible' } as ProviderConfig;
     onChange([...(providers ?? []), next]);
@@ -177,9 +180,9 @@ export const Providers: React.FC<ProvidersProps> = ({ providers, onChange }) => 
     return (
       <div>
         <VscodeButton onClick={addProvider} secondary style={{ marginTop: '12px', marginBottom: '12px' }}>
-          + Add Provider
+          + {t('providers.add')}
         </VscodeButton>
-        <div className="empty-state">No providers configured. Click "Add Provider" to get started.</div>
+        <div className="empty-state">{t('providers.empty')}</div>
       </div>
     );
   }
@@ -187,7 +190,7 @@ export const Providers: React.FC<ProvidersProps> = ({ providers, onChange }) => 
   return (
     <div>
       <VscodeButton onClick={addProvider} secondary style={{ marginTop: '12px', marginBottom: '12px' }}>
-        + Add Provider
+        + {t('providers.add')}
       </VscodeButton>
       <div className="item-list">
         {providers.map((p, i) => (

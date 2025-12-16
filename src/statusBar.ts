@@ -9,9 +9,9 @@ export function initStatusBar(context: vscode.ExtensionContext): vscode.StatusBa
 		vscode.StatusBarAlignment.Right,
 		100
 	);
-	tokenCountStatusBarItem.name = "Token Count";
-	tokenCountStatusBarItem.text = "$(symbol-numeric) Ready";
-	tokenCountStatusBarItem.tooltip = "Current model token usage - Click to open configuration";
+	tokenCountStatusBarItem.name = vscode.l10n.t("statusBar.tokenCount");
+	tokenCountStatusBarItem.text = vscode.l10n.t("statusBar.ready");
+	tokenCountStatusBarItem.tooltip = vscode.l10n.t("statusBar.tokenCount");
 	tokenCountStatusBarItem.command = "generic-copilot.openConfiguration";
 	context.subscriptions.push(tokenCountStatusBarItem);
 	// Show the status bar item initially

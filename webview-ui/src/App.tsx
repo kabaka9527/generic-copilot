@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ModelItem, ProviderConfig, ModelProperties, ModelParameters } from '../../src/types';
 import { Providers } from './components/Providers';
 import { Models } from './components/Models';
 import { VscodeButton, VscodeTabs, VscodeTabHeader, VscodeTabPanel } from '@vscode-elements/react-elements';
+import i18next from './i18n'; // Import the i18n instance
 
 declare function acquireVsCodeApi(): {
     postMessage: (message: any) => void;
@@ -12,7 +14,12 @@ declare function acquireVsCodeApi(): {
 };
 
 
-interface InMessage { command: 'loadConfiguration'; providers: ProviderConfig[]; models: any[] }
+interface InMessage {
+    command: 'loadConfiguration';
+    providers: ProviderConfig[];
+    models: any[];
+    vscodeLanguage?: string;
+}
 
 const toGrouped = (m: any): ModelItem => {
     const mp: ModelProperties = m?.model_properties ?? {
@@ -43,6 +50,7 @@ const cleanProviderDefaults = (p: ProviderConfig): ProviderConfig => {
 };
 
 const App: React.FC = () => {
+    const { t } = useTranslation();
     const vscode = useMemo(() => {
         try { return acquireVsCodeApi(); } catch { return undefined; }
     }, []);
@@ -56,6 +64,22 @@ const App: React.FC = () => {
             const msg = ev.data;
             if (!msg) { return; }
             if (msg.command === 'loadConfiguration') {
+                // Check if we have a language preference from VS Code
+                if (msg.vscodeLanguage) {
+                    // Map VS Code language to our supported languages
+                    const languageMap: Record<string, string> = {
+                        'zh-cn': 'zh-CN',
+                        'zh-tw': 'zh-CN', // Use simplified Chinese for traditional as well
+                        'zh': 'zh-CN',
+                    };
+                    const targetLang = languageMap[msg.vscodeLanguage.toLowerCase()] || 'en';
+
+                    // Update the language if it's different
+                    if (i18next.language !== targetLang) {
+                        i18next.changeLanguage(targetLang);
+                    }
+                }
+
                 setProviders(msg.providers || []);
                 setModels((msg.models || []).map(toGrouped));
                 setLoading(false);
@@ -90,11 +114,11 @@ const App: React.FC = () => {
 
     return (
         <div className="p-5" style={{ color: 'var(--vscode-foreground)', fontFamily: 'var(--vscode-font-family)' }}>
-            <h1>Generic Copilot Configuration</h1>
+            <h1>{t('app.title')}</h1>
 
             <VscodeTabs>
-                <VscodeTabHeader slot="header">Providers</VscodeTabHeader>
-                <VscodeTabHeader slot="header">Models</VscodeTabHeader>
+                <VscodeTabHeader slot="header">{t('providers.title')}</VscodeTabHeader>
+                <VscodeTabHeader slot="header">{t('models.title')}</VscodeTabHeader>
                 <VscodeTabPanel>
                     <div className="section">
                         <Providers providers={providers} onChange={setProviders} />
@@ -120,14 +144,14 @@ const App: React.FC = () => {
             >
                 <div className="save-section" style={{ display: 'flex', gap: 8 }}>
                     <VscodeButton onClick={onSave} disabled={loading}>
-                        Save Configuration
+                        {t('common.save')}
                     </VscodeButton>
                     <VscodeButton onClick={openSettings} secondary>
-                        Open settings.json
+                        {t('app.openSettingsJson')}
                     </VscodeButton>
                 </div>
             </div>
-            {loading && <div className="empty-state">Loading configuration…</div>}
+            {loading && <div className="empty-state">{t('common.loading')}</div>}
         </div>
     );
 };

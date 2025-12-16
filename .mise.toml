@@ -1,0 +1,7 @@
+[env]
+# Project-level Node.js version configuration
+node = "22"
+
+[tools]
+node = "22"
+npm = "latest"

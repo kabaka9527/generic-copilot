@@ -72,7 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.registerWebviewViewProvider(ConsoleViewProvider.viewType, consoleViewProvider)
 	);
 
-	console.debug("GenericCopilot extension activated.");
+	logger.debug("GenericCopilot extension activated.");
 	// Command to open configuration GUI
 	context.subscriptions.push(
 		vscode.commands.registerCommand("generic-copilot.openConfiguration", () => {
@@ -86,10 +86,10 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand("generic-copilot.refresh", async () => {
 			try {
 				vscode.lm.registerLanguageModelChatProvider("generic-copilot", provider);
-				vscode.window.showInformationMessage("GenericCopilot model configurations refreshed.");
+				vscode.window.showInformationMessage(vscode.l10n.t("message.modelConfigurationsRefreshed"));
 			} catch (err) {
 				const msg = err instanceof Error ? err.message : String(err);
-				vscode.window.showErrorMessage(`Failed to refresh GenericCopilot models: ${msg}`);
+				vscode.window.showErrorMessage(vscode.l10n.t("message.failedToRefreshModels", msg));
 			}
 		})
 	);
@@ -112,15 +112,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 			if (providers.length === 0) {
 				vscode.window.showErrorMessage(
-					"No providers found in generic-copilot.models or generic-copilot.providers configuration. Please configure providers or models first."
+					vscode.l10n.t("error.noProvidersFound")
 				);
 				return;
 			}
 
 			// Let user select provider
 			const selectedProvider = await vscode.window.showQuickPick(providers, {
-				title: "Select Provider",
-				placeHolder: "Select a provider to configure API key",
+				title: vscode.l10n.t("dialog.selectProvider"),
+				placeHolder: vscode.l10n.t("dialog.selectProvider.placeHolder"),
 			});
 
 			if (!selectedProvider) {
@@ -133,8 +133,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// Prompt for API key
 			const apiKey = await vscode.window.showInputBox({
-				title: `Generic Compatible API Key for ${selectedProvider}`,
-				prompt: existing ? `Update API key for ${selectedProvider}` : `Enter API key for ${selectedProvider}`,
+				title: vscode.l10n.t("dialog.providerApiKey.title", selectedProvider),
+				prompt: existing ? vscode.l10n.t("dialog.providerApiKey.updatePrompt", selectedProvider) : vscode.l10n.t("dialog.providerApiKey.enterPrompt", selectedProvider),
 				ignoreFocusOut: true,
 				password: true,
 				value: existing ?? "",
@@ -146,12 +146,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 			if (!apiKey.trim()) {
 				await context.secrets.delete(providerKey);
-				vscode.window.showInformationMessage(`API key for ${selectedProvider} cleared.`);
+				vscode.window.showInformationMessage(vscode.l10n.t("dialog.apiKeyClear.success", selectedProvider));
 				return;
 			}
 
 			await context.secrets.store(providerKey, apiKey.trim());
-			vscode.window.showInformationMessage(`API key for ${selectedProvider} saved.`);
+			vscode.window.showInformationMessage(vscode.l10n.t("dialog.apiKeySave.success", selectedProvider));
 		})
 	);
 

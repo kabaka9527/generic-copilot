@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ModelProperties, ProviderConfig } from '../../../src/types';
 import { parseIntOrUndef } from '../utils';
 import {
@@ -14,6 +15,7 @@ export interface ModelPropertiesProps {
 }
 
 const ModelPropertiesForm: React.FC<ModelPropertiesProps> = ({ value, onChange }) => {
+    const { t } = useTranslation();
     const update = (field: keyof ModelProperties, v: any) => {
         if (v === '' || (typeof v === 'number' && Number.isNaN(v))) {
             onChange(field, undefined);
@@ -25,12 +27,13 @@ const ModelPropertiesForm: React.FC<ModelPropertiesProps> = ({ value, onChange }
     return (
         <div className="collapsible-content">
             <h4>
-                Model properties <small>(internal — not sent to provider)</small>
+                {t('modelProperties.title')} <small>({t('modelProperties.internalOnly')})
+                </small>
             </h4>
             {/* Config ID moved to top-level ModelItem; edited in Models.tsx */}
 
             <div className="form-field">
-                <VscodeFormHelper>Context Length</VscodeFormHelper>
+                <VscodeFormHelper>{t('modelProperties.contextLengthLabel')}</VscodeFormHelper>
                 <VscodeTextfield
                     type="number"
                     value={(value?.context_length as unknown as string) ?? ''}
@@ -40,10 +43,10 @@ const ModelPropertiesForm: React.FC<ModelPropertiesProps> = ({ value, onChange }
             </div>
 
             <div className="form-field">
-                <VscodeFormHelper>Family</VscodeFormHelper>
+                <VscodeFormHelper>{t('modelProperties.familyLabel')}</VscodeFormHelper>
                 <VscodeTextfield
                     type="text"
-                    placeholder="e.g., gpt-4, claude-3, gemini"
+                    placeholder={t('modelProperties.familyPlaceholder')}
                     value={(value?.family as unknown as string) ?? ''}
                     onInput={(e: any) => update('family', e.currentTarget.value)}
                 >

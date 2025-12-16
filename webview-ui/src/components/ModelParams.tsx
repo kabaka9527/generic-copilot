@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ModelParameters } from '../../../src/types';
 import { tryParseJson, prettyJson, parseFloatOrNull } from '../utils';
 import {
@@ -14,6 +15,7 @@ export interface ModelParamsProps {
 }
 
 const ModelParamsForm: React.FC<ModelParamsProps> = ({ value, onChange }) => {
+    const { t } = useTranslation();
     const update = (field: keyof ModelParameters | string, v: any) => {
         const next: any = { ...(value || ({} as ModelParameters)) };
         if (v === '' || (typeof v === 'number' && Number.isNaN(v))) {
@@ -27,14 +29,15 @@ const ModelParamsForm: React.FC<ModelParamsProps> = ({ value, onChange }) => {
     return (
         <div className="collapsible-content">
             <h4>
-                Model parameters <small>(sent to provider)</small>
+                {t('modelParams.title')} <small>({t('modelParams.sentToProvider')})
+                </small>
             </h4>
 
 
 
 
             <div className="form-field">
-                <VscodeFormHelper>Temperature (0-2)</VscodeFormHelper>
+                <VscodeFormHelper>{t('modelParams.temperatureLabel')}</VscodeFormHelper>
                 <VscodeTextfield
                     type="number"
                     step={0.1}
@@ -42,21 +45,21 @@ const ModelParamsForm: React.FC<ModelParamsProps> = ({ value, onChange }) => {
                     onInput={(e: any) => update('temperature', parseFloatOrNull(e.currentTarget.value))}
                 >
                 </VscodeTextfield>
-                <VscodeFormHelper>Range 0–2. Set null to omit from request.</VscodeFormHelper>
+                <VscodeFormHelper>{t('modelParams.temperatureDescription')}</VscodeFormHelper>
             </div>
 
 
 
             <div className="form-field">
-                <VscodeFormHelper>Custom Params (JSON)</VscodeFormHelper>
+                <VscodeFormHelper>{t('modelParams.customParamsLabel')}</VscodeFormHelper>
                 <VscodeTextarea
                     rows={4 as any}
-                    placeholder='{"custom_param":"value"}'
+                    placeholder={t('modelParams.customParamsPlaceholder')}
                     value={prettyJson(value?.extra)}
                     onInput={(e: any) => update('extra', tryParseJson(e.currentTarget.value))}
                 >
                 </VscodeTextarea>
-                <VscodeFormHelper>Provider-specific parameters (JSON object)</VscodeFormHelper>
+                <VscodeFormHelper>{t('modelParams.customParamsDescription')}</VscodeFormHelper>
             </div>
         </div>
     );
