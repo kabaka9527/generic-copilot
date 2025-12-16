@@ -1,17 +1,9 @@
-name: Manual Release to VS Code Marketplace
+name: GitHub Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Tag to release (e.g., v1.0.0)'
-        required: true
-        type: string
-      publish_to_marketplace:
-        description: 'Publish to VS Code Marketplace?'
-        required: true
-        default: true
-        type: boolean
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build-and-release:
@@ -55,11 +47,6 @@ jobs:
           else
             git log --pretty=format:"- %s (%h)" $PREV_TAG..$CURRENT_TAG >> RELEASE_BODY.md
           fi
-
-      - name: Publish to VS Code Marketplace
-        run: npx vsce publish --packagePath generic-copilot.vsix --allow-all-proposed-apis --skip-duplicate
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
