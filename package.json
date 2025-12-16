@@ -267,7 +267,7 @@
 		"compile:webview": "cd webview-ui  && npm run compile",
 		"watch:webview": "cd webview-ui && npm run watch",
 		"watch:extension": "tsc --watch -p ./",
-		"package": "npm run compile:all && vsce package --out generic-copilot.vsix",
+		"package": "npm run compile:all && vsce package --out generic-copilot-zh.vsix",
 		"release": "./scripts/publish.sh"
 	},
 	"devDependencies": {
