@@ -1,8 +1,8 @@
 {
 	"name": "generic-copilot",
-	"publisher": "mcowger",
-	"displayName": "Generic Provider for Copilot",
-	"description": "An extension that integrates Vercel AI SDK compatible inference Providers into GitHub Copilot Chat",
+	"publisher": "kabaka9527",
+	"displayName": "通用 Copilot 提供商",
+	"description": "一个将兼容 Vercel AI SDK 的推理提供商集成到 GitHub Copilot Chat 的扩展",
 	"icon": "assets/logo.png",
 	"keywords": [
 		"ai",
@@ -13,7 +13,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/mcowger/generic-copilot"
+		"url": "https://github.com/kabaka9527/generic-copilot"
 	},
 	"version": "0.16.0",
 	"engines": {
