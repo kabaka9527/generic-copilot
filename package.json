@@ -1,7 +1,7 @@
 {
 	"name": "generic-copilot",
 	"publisher": "kabaka9527",
-	"displayName": "通用 Copilot 提供商",
+	"displayName": "Copilot Model Expansion",
 	"description": "一个将兼容 Vercel AI SDK 的推理提供商集成到 GitHub Copilot Chat 的扩展",
 	"icon": "assets/logo.png",
 	"keywords": [
