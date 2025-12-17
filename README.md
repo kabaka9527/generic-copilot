@@ -17,6 +17,7 @@
 ## 修改
 
 - 增加了 webview-ui 中文汉化
+- 添加iFlow OAuth登录支持
 
 ## ✨ 功能特点
 
