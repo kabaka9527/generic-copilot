@@ -15,7 +15,7 @@
 		"type": "git",
 		"url": "https://github.com/kabaka9527/generic-copilot"
 	},
-	"version": "0.16.0",
+	"version": "0.16.1",
 	"engines": {
 		"vscode": "^1.105.0"
 	},
@@ -32,6 +32,7 @@
 		"languageModelThinkingPart",
 		"languageModelSystem"
 	],
+	"l10n": "./l10n",
 	"activationEvents": [
 		"onStartupFinished",
 		"onLanguageModelChatProvider:generic-copilot"
@@ -75,6 +76,10 @@
 			{
 				"command": "generic-copilot.refresh",
 				"title": "GenericCopilot: Refresh Model Configs"
+			},
+			{
+				"command": "generic-copilot.initiateIFlowOAuth",
+				"title": "GenericCopilot: Initiate iFlow OAuth Authentication"
 			}
 		],
 		"menus": {
@@ -247,6 +252,17 @@
 		}
 	},
 	"localizations": [
+		{
+			"languageId": "en",
+			"languageName": "English",
+			"localizedLanguageName": "English",
+			"translations": [
+				{
+					"id": "vscode",
+					"path": "./nls/en/messages.json"
+				}
+			]
+		},
 		{
 			"languageId": "zh-cn",
 			"languageName": "Simplified Chinese",
