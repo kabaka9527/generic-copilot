@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ModelParameters } from '../../../src/types';
 import { tryParseJson, prettyJson, parseFloatOrNull } from '../utils';
@@ -16,6 +16,16 @@ export interface ModelParamsProps {
 
 const ModelParamsForm: React.FC<ModelParamsProps> = ({ value, onChange }) => {
     const { t } = useTranslation();
+    const initialTemperatureText = useMemo(() => {
+        const v = value?.temperature;
+        return v === null || v === undefined ? '' : String(v);
+    }, [value?.temperature]);
+    const [temperatureText, setTemperatureText] = useState<string>(initialTemperatureText);
+
+    useEffect(() => {
+        setTemperatureText(initialTemperatureText);
+    }, [initialTemperatureText]);
+
     const update = (field: keyof ModelParameters | string, v: any) => {
         const next: any = { ...(value || ({} as ModelParameters)) };
         if (v === '' || (typeof v === 'number' && Number.isNaN(v))) {
@@ -39,10 +49,16 @@ const ModelParamsForm: React.FC<ModelParamsProps> = ({ value, onChange }) => {
             <div className="form-field">
                 <VscodeFormHelper>{t('modelParams.temperatureLabel')}</VscodeFormHelper>
                 <VscodeTextfield
-                    type="number"
-                    step={0.1}
-                    value={(value?.temperature as unknown as string) ?? ''}
-                    onInput={(e: any) => update('temperature', parseFloatOrNull(e.currentTarget.value))}
+                    type="text"
+                    inputMode="decimal"
+                    value={temperatureText}
+                    onInput={(e: any) => setTemperatureText(e.currentTarget.value)}
+					onBlur={() => update('temperature', parseFloatOrNull((temperatureText ?? '').trim()))}
+					onKeyDown={(e: any) => {
+						if (e.key === 'Enter') {
+							update('temperature', parseFloatOrNull((temperatureText ?? '').trim()));
+						}
+					}}
                 >
                 </VscodeTextfield>
                 <VscodeFormHelper>{t('modelParams.temperatureDescription')}</VscodeFormHelper>

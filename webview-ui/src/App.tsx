@@ -19,6 +19,7 @@ interface InMessage {
     providers: ProviderConfig[];
     models: any[];
     vscodeLanguage?: string;
+	iflowStatus?: Record<string, { loggedIn: boolean; expire?: string; lastRefresh?: string; email?: string }>;
 }
 
 const toGrouped = (m: any): ModelItem => {
@@ -45,10 +46,6 @@ const toGrouped = (m: any): ModelItem => {
     } as ModelItem;
 };
 
-const cleanProviderDefaults = (p: ProviderConfig): ProviderConfig => {
-    return p;
-};
-
 const App: React.FC = () => {
     const { t } = useTranslation();
     const vscode = useMemo(() => {
@@ -58,6 +55,28 @@ const App: React.FC = () => {
     const [providers, setProviders] = useState<ProviderConfig[]>([]);
     const [models, setModels] = useState<ModelItem[]>([]);
     const [loading, setLoading] = useState(true);
+	const [iflowStatus, setIflowStatus] = useState<Record<string, { loggedIn: boolean; expire?: string; lastRefresh?: string; email?: string }>>({});
+
+    const initiateIflowOAuth = useCallback(
+        (provider: ProviderConfig) => {
+            vscode?.postMessage({ command: 'iflowOAuth', provider });
+        },
+        [vscode]
+    );
+
+    const clearIflowAuth = useCallback(
+        (provider: ProviderConfig) => {
+            vscode?.postMessage({ command: 'iflowClearAuth', provider });
+        },
+        [vscode]
+    );
+
+    const validateProvider = useCallback(
+        (provider: ProviderConfig, model: ModelItem) => {
+            vscode?.postMessage({ command: 'validateProvider', provider, model });
+        },
+        [vscode]
+    );
 
     useEffect(() => {
         const handler = (ev: MessageEvent<InMessage>) => {
@@ -82,6 +101,7 @@ const App: React.FC = () => {
 
                 setProviders(msg.providers || []);
                 setModels((msg.models || []).map(toGrouped));
+				setIflowStatus(msg.iflowStatus || {});
                 setLoading(false);
             }
         };
@@ -104,7 +124,7 @@ const App: React.FC = () => {
             return;
         }
 
-        const cleanedProviders = providers.map(cleanProviderDefaults);
+        const cleanedProviders = providers;
         vscode?.postMessage({ command: 'save', providers: cleanedProviders, models });
     }, [providers, models, vscode]);
 
@@ -121,12 +141,12 @@ const App: React.FC = () => {
                 <VscodeTabHeader slot="header">{t('models.title')}</VscodeTabHeader>
                 <VscodeTabPanel>
                     <div className="section">
-                        <Providers providers={providers} onChange={setProviders} />
+                        <Providers providers={providers} onChange={setProviders} onIflowOAuth={initiateIflowOAuth} onIflowClearAuth={clearIflowAuth} iflowStatus={iflowStatus} />
                     </div>
                 </VscodeTabPanel>
                 <VscodeTabPanel>
                     <div className="section">
-                        <Models providers={providers} models={models} onChange={setModels} />
+						<Models providers={providers} models={models} onChange={setModels} onValidateProvider={validateProvider} />
                     </div>
                 </VscodeTabPanel>
             </VscodeTabs>

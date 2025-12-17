@@ -7,7 +7,6 @@ import { ModelItem, ProviderModelConfig } from "../types";
 import { logger } from "../outputLogger";
 import { ProviderClientFactory } from "../ai/providerClientFactory";
 import { ProviderClient } from "../ai/providerClient";
-import { log } from "console";
 
 let isRequestPending = false;
 
@@ -27,7 +26,7 @@ async function registerInlineCompletionItemProvider(context: vscode.ExtensionCon
 		}
 		const providerModelConfig: ProviderModelConfig = await getExecutionDataForModel(modelItem, secrets);
 		logger.debug(`Registering inline completion item provider for model: ${modelItem.id}`);
-		const client = ProviderClientFactory.getClient(providerModelConfig);
+		const client = ProviderClientFactory.getClient(providerModelConfig, secrets);
 		const inlineCompletionItemDocumentSelector: vscode.DocumentSelector = { pattern: "**" };
 		const inlineCompletionItemProvider: vscode.InlineCompletionItemProvider = {
 			provideInlineCompletionItems: async (

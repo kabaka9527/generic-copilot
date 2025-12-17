@@ -1,0 +1,38 @@
+{
+  "configuration.title": "Generic Compatible Copilot",
+
+  "error.noProvidersFound": "No providers found in generic-copilot.models or generic-copilot.providers. Please configure providers/models first.",
+
+  "dialog.selectProvider": "Select provider",
+  "dialog.selectProvider.placeHolder": "Choose a provider to configure API key",
+  "dialog.providerApiKey.title": "Provider API key - {0}",
+  "dialog.providerApiKey.updatePrompt": "Update API key for {0}",
+  "dialog.providerApiKey.enterPrompt": "Enter API key for {0}",
+  "dialog.apiKeyClear.success": "Cleared API key for {0}.",
+  "dialog.apiKeySave.success": "Saved API key for {0}.",
+
+  "message.modelConfigurationsRefreshed": "GenericCopilot model configurations refreshed.",
+  "message.failedToRefreshModels": "Failed to refresh GenericCopilot models: {0}",
+
+  "message.iflowOAuthRequired": "Detected iFlow provider: this provider requires OAuth login.",
+  "action.startOAuth": "Start OAuth login",
+  "action.openConfig": "Open configuration",
+  "message.iflowOAuthSuccess": "iFlow OAuth login succeeded (provider: {0}).",
+  "message.iflowOAuthProviderMissing": "Cannot start iFlow OAuth: missing provider config (select/save a provider first).",
+
+  "message.iflowClearAuthProviderMissing": "Cannot clear iFlow OAuth: missing provider config.",
+  "message.iflowClearAuthSuccess": "Cleared iFlow OAuth login (provider: {0}).",
+  "message.iflowClearAuthFailed": "Failed to clear iFlow OAuth login: {0}",
+
+  "message.validateProviderMissing": "Cannot validate: missing provider configuration.",
+  "message.validateModelMissing": "Cannot validate: missing model configuration (slug required).",
+  "message.validateProviderUnsupported": "Validation currently supports iFlow provider only.",
+  "message.iflowApiKeyMissing": "iFlow API key not found. Please complete OAuth login first.",
+  "message.validateProviderSuccess": "Provider validation succeeded: {0}",
+  "message.validateProviderSuccessWithResponse": "Provider validation succeeded: {0} (model: {1}) => {2}",
+  "message.validateProviderFailed": "Provider validation failed: {0}",
+
+  "statusBar.ready": "$(symbol-numeric) Ready",
+  "statusBar.tokenCount": "Current model token usage - click to open configuration",
+  "statusBar.tooltip": "Token Usage: {0} / {1}\n\n{2}\n\nClick to open configuration"
+}

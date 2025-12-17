@@ -9,6 +9,7 @@ import { ConsoleViewProvider } from "./consoleView";
 import { logger } from "./outputLogger";
 import { registerInlineCompletionItemProvider } from "./autocomplete/fimProvider";
 import { CacheRegistry } from "./ai/utils/metadataCache";
+import { IFlowProviderClient } from "./ai/providers/iflow";
 
 function setupDevAutoRestart(context: vscode.ExtensionContext) {
 	if (context.extensionMode !== vscode.ExtensionMode.Development) {
@@ -76,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// Command to open configuration GUI
 	context.subscriptions.push(
 		vscode.commands.registerCommand("generic-copilot.openConfiguration", () => {
-			ConfigurationPanel.createOrShow(context.extensionUri);
+			ConfigurationPanel.createOrShow(context, context.extensionUri);
 		})
 	);
 
@@ -127,6 +128,25 @@ export function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 
+			// Check if this is an iFlow provider that requires OAuth
+			const providerConfig = configuredProviders.find(p => p.id.toLowerCase() === selectedProvider);
+			if (providerConfig && providerConfig.vercelType === 'iflow') {
+				const action = await vscode.window.showInformationMessage(
+					vscode.l10n.t("message.iflowOAuthRequired"),
+					vscode.l10n.t("action.startOAuth"),
+					vscode.l10n.t("action.openConfig")
+				);
+				if (action === vscode.l10n.t("action.startOAuth")) {
+					await vscode.commands.executeCommand("generic-copilot.initiateIFlowOAuth");
+					return;
+				}
+				if (action === vscode.l10n.t("action.openConfig")) {
+					ConfigurationPanel.createOrShow(context, context.extensionUri);
+					return;
+				}
+				return;
+			}
+
 			// Get existing API key for selected provider
 			const providerKey = `generic-copilot.apiKey.${selectedProvider}`;
 			const existing = await context.secrets.get(providerKey);
@@ -152,6 +172,45 @@ export function activate(context: vscode.ExtensionContext) {
 
 			await context.secrets.store(providerKey, apiKey.trim());
 			vscode.window.showInformationMessage(vscode.l10n.t("dialog.apiKeySave.success", selectedProvider));
+		})
+	);
+
+	// Command to initiate OAuth flow for iFlow provider
+	context.subscriptions.push(
+		vscode.commands.registerCommand("generic-copilot.initiateIFlowOAuth", async () => {
+			// Get provider list from configuration
+			const config = vscode.workspace.getConfiguration();
+			const configuredProviders = config.get<ProviderConfig[]>("generic-copilot.providers", []);
+
+			// Find iFlow providers
+			const iflowProviders = configuredProviders.filter(p => p.vercelType === 'iflow');
+
+			if (iflowProviders.length === 0) {
+				vscode.window.showErrorMessage("No iFlow providers configured.");
+				return;
+			}
+
+			// Let user select which iFlow provider to authenticate
+			const providerNames = iflowProviders.map(p => p.id);
+			const selectedProvider = await vscode.window.showQuickPick(providerNames, {
+				title: "Select iFlow Provider for OAuth",
+				placeHolder: "Choose an iFlow provider to authenticate"
+			});
+
+			if (!selectedProvider) {
+				return;
+			}
+
+			// Find the provider config
+			const providerConfig = iflowProviders.find(p => p.id === selectedProvider);
+			if (!providerConfig) {
+				vscode.window.showErrorMessage(`iFlow provider ${selectedProvider} not found.`);
+				return;
+			}
+
+			const existingApiKey = await context.secrets.get(`generic-copilot.apiKey.${selectedProvider}`);
+			const client = new IFlowProviderClient(providerConfig, existingApiKey || "", context.secrets);
+			await client.initiateOAuth();
 		})
 	);
 

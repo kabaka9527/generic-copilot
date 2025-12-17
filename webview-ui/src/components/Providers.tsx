@@ -17,17 +17,56 @@ import {
 export interface ProvidersProps {
   providers: ProviderConfig[];
   onChange: (providers: ProviderConfig[]) => void;
+	onIflowOAuth: (provider: ProviderConfig) => void;
+  onIflowClearAuth: (provider: ProviderConfig) => void;
+	iflowStatus?: Record<string, { loggedIn: boolean; expire?: string; lastRefresh?: string; email?: string }>;
 }
 
-const vercelTypes: ProviderConfig['vercelType'][] = ['openai-compatible', 'openai', 'openrouter', 'google', 'claude-code', 'deepseek'];
+const vercelTypes: ProviderConfig['vercelType'][] = ['openai-compatible', 'openai', 'openrouter', 'google', 'claude-code', 'deepseek', 'iflow'];
 
 const ProviderItem: React.FC<{
   provider: ProviderConfig;
   index: number;
   onUpdate: (next: ProviderConfig) => void;
   onRemove: () => void;
-}> = ({ provider, index, onUpdate, onRemove }) => {
+  onIflowOAuth: (provider: ProviderConfig) => void;
+  onIflowClearAuth: (provider: ProviderConfig) => void;
+  iflowStatus?: Record<string, { loggedIn: boolean; expire?: string; lastRefresh?: string; email?: string }>;
+}> = ({ provider, index, onUpdate, onRemove, onIflowOAuth, onIflowClearAuth, iflowStatus }) => {
   const { t } = useTranslation();
+	const status = provider.vercelType === 'iflow' && provider.id ? iflowStatus?.[provider.id] : undefined;
+	const loggedIn = Boolean(status?.loggedIn);
+  const expireMs = status?.expire ? new Date(status.expire).getTime() : NaN;
+  const lastRefreshMs = status?.lastRefresh ? new Date(status.lastRefresh).getTime() : NaN;
+  const expireAtText = (() => {
+    if (!Number.isFinite(expireMs)) return '';
+    return new Date(expireMs).toLocaleString();
+  })();
+  const lastRefreshText = (() => {
+    if (!Number.isFinite(lastRefreshMs)) return '';
+    return new Date(lastRefreshMs).toLocaleString();
+  })();
+  const formatDuration = (ms: number): string => {
+    if (!Number.isFinite(ms)) return '';
+    if (ms <= 0) return t('providers.iflowExpired');
+    const totalMinutes = Math.floor(ms / 60000);
+    const days = Math.floor(totalMinutes / (60 * 24));
+    const hours = Math.floor((totalMinutes - days * 60 * 24) / 60);
+    const minutes = totalMinutes - days * 60 * 24 - hours * 60;
+    const parts: string[] = [];
+    if (days > 0) parts.push(`${days}${t('providers.iflowDays')}`);
+    if (hours > 0 || days > 0) parts.push(`${hours}${t('providers.iflowHours')}`);
+    parts.push(`${minutes}${t('providers.iflowMinutes')}`);
+    return parts.join(' ');
+  };
+  const validityText = (() => {
+    if (!Number.isFinite(expireMs) || !Number.isFinite(lastRefreshMs)) return '';
+    return formatDuration(expireMs - lastRefreshMs);
+  })();
+  const remainingText = (() => {
+    if (!Number.isFinite(expireMs)) return '';
+    return formatDuration(expireMs - Date.now());
+  })();
   const updateField = (field: 'id' | 'displayName' | 'baseUrl' | 'vercelType', value: string) => {
     const next: ProviderConfig = { ...provider };
     const v = value === '' ? '' : value;
@@ -71,9 +110,21 @@ const ProviderItem: React.FC<{
   return (
     <div className="item">
       <VscodeCollapsible heading={`${t('providers.provider')} ${index + 1}${provider.displayName ? ` – ${provider.displayName}` : ''}`} alwaysShowHeaderActions>
-        <VscodeButton onClick={onRemove} secondary slot="actions">
-          {t('common.delete')}
+    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', padding: '8px 0' }}>
+      {provider.vercelType === 'iflow' && (
+        <VscodeButton onClick={() => onIflowOAuth(provider)} secondary>
+          {t('providers.iflowOAuth')}
         </VscodeButton>
+      )}
+      {provider.vercelType === 'iflow' && (
+        <VscodeButton onClick={() => onIflowClearAuth(provider)} secondary>
+          {t('providers.iflowClearAuth')}
+        </VscodeButton>
+      )}
+      <VscodeButton onClick={onRemove} secondary>
+        {t('common.delete')}
+      </VscodeButton>
+    </div>
         <div className="form-field">
           <VscodeFormHelper>{t('providers.id')}</VscodeFormHelper>
           <VscodeTextfield
@@ -87,6 +138,38 @@ const ProviderItem: React.FC<{
             {t('providers.idRequired')}
           </VscodeFormHelper>
         </div>
+
+    {provider.vercelType === 'iflow' && (
+      <div className="form-field">
+        <VscodeFormHelper>{t('providers.iflowOAuthStatus')}</VscodeFormHelper>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span
+            aria-label={loggedIn ? t('providers.iflowLoggedIn') : t('providers.iflowLoggedOut')}
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: 999,
+              background: loggedIn ? 'var(--vscode-testing-iconPassed)' : 'var(--vscode-descriptionForeground)',
+            }}
+          />
+          <span style={{ color: 'var(--vscode-foreground)' }}>
+            {loggedIn ? t('providers.iflowLoggedIn') : t('providers.iflowLoggedOut')}
+          </span>
+        </div>
+        <VscodeFormHelper>
+          {t('providers.iflowExpiresAt')}: {expireAtText || t('providers.iflowExpireUnknown')}
+        </VscodeFormHelper>
+        <VscodeFormHelper>
+          {t('providers.iflowValidity')}: {validityText || t('providers.iflowExpireUnknown')}
+        </VscodeFormHelper>
+        <VscodeFormHelper>
+          {t('providers.iflowRemaining')}: {remainingText || t('providers.iflowExpireUnknown')}
+        </VscodeFormHelper>
+        <VscodeFormHelper>
+          {t('providers.iflowLastRefresh')}: {lastRefreshText || t('providers.iflowExpireUnknown')}
+        </VscodeFormHelper>
+      </div>
+    )}
 
         <div className="form-field">
           <VscodeFormHelper>{t('providers.vercelTypeLabel')}</VscodeFormHelper>
@@ -149,7 +232,6 @@ const ProviderItem: React.FC<{
           <VscodeFormHelper>{t('providers.providerSpecificOptionsDescription')}</VscodeFormHelper>
         </div>
 
-
       </VscodeCollapsible>
       <VscodeDivider></VscodeDivider>
     </div>
@@ -157,10 +239,27 @@ const ProviderItem: React.FC<{
   );
 };
 
-export const Providers: React.FC<ProvidersProps> = ({ providers, onChange }) => {
+export const Providers: React.FC<ProvidersProps> = ({ providers, onChange, onIflowOAuth, onIflowClearAuth, iflowStatus }) => {
   const { t } = useTranslation();
-  const addProvider = () => {
-    const next: ProviderConfig = { id: '', baseUrl: '', displayName: '', vercelType: 'openai-compatible' } as ProviderConfig;
+  const addProvider = (type: ProviderConfig['vercelType'] = 'openai-compatible') => {
+    let next: ProviderConfig;
+    switch (type) {
+      case 'iflow':
+        next = {
+          id: 'iflow',
+          baseUrl: 'https://apis.iflow.cn/v1',
+          displayName: 'iFlow',
+          vercelType: 'iflow'
+        } as ProviderConfig;
+        break;
+      default:
+        next = {
+          id: '',
+          baseUrl: '',
+          displayName: '',
+          vercelType: type
+        } as ProviderConfig;
+    }
     onChange([...(providers ?? []), next]);
   };
 
@@ -179,9 +278,29 @@ export const Providers: React.FC<ProvidersProps> = ({ providers, onChange }) => 
   if (!providers || providers.length === 0) {
     return (
       <div>
-        <VscodeButton onClick={addProvider} secondary style={{ marginTop: '12px', marginBottom: '12px' }}>
-          + {t('providers.add')}
-        </VscodeButton>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+          <VscodeButton onClick={() => addProvider('openai-compatible')} secondary>
+            + OpenAI-Compatible
+          </VscodeButton>
+          <VscodeButton onClick={() => addProvider('openai')} secondary>
+            + OpenAI
+          </VscodeButton>
+          <VscodeButton onClick={() => addProvider('openrouter')} secondary>
+            + OpenRouter
+          </VscodeButton>
+          <VscodeButton onClick={() => addProvider('google')} secondary>
+            + Google
+          </VscodeButton>
+          <VscodeButton onClick={() => addProvider('iflow')} secondary>
+            + iFlow
+          </VscodeButton>
+          <VscodeButton onClick={() => addProvider('deepseek')} secondary>
+            + DeepSeek
+          </VscodeButton>
+          <VscodeButton onClick={() => addProvider('claude-code')} secondary>
+            + Claude Code
+          </VscodeButton>
+        </div>
         <div className="empty-state">{t('providers.empty')}</div>
       </div>
     );
@@ -189,9 +308,29 @@ export const Providers: React.FC<ProvidersProps> = ({ providers, onChange }) => 
 
   return (
     <div>
-      <VscodeButton onClick={addProvider} secondary style={{ marginTop: '12px', marginBottom: '12px' }}>
-        + {t('providers.add')}
-      </VscodeButton>
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+        <VscodeButton onClick={() => addProvider('openai-compatible')} secondary>
+          + OpenAI-Compatible
+        </VscodeButton>
+        <VscodeButton onClick={() => addProvider('openai')} secondary>
+          + OpenAI
+        </VscodeButton>
+        <VscodeButton onClick={() => addProvider('openrouter')} secondary>
+          + OpenRouter
+        </VscodeButton>
+        <VscodeButton onClick={() => addProvider('google')} secondary>
+          + Google
+        </VscodeButton>
+        <VscodeButton onClick={() => addProvider('iflow')} secondary>
+          + iFlow
+        </VscodeButton>
+        <VscodeButton onClick={() => addProvider('deepseek')} secondary>
+          + DeepSeek
+        </VscodeButton>
+        <VscodeButton onClick={() => addProvider('claude-code')} secondary>
+          + Claude Code
+        </VscodeButton>
+      </div>
       <div className="item-list">
         {providers.map((p, i) => (
           <ProviderItem
@@ -200,6 +339,9 @@ export const Providers: React.FC<ProvidersProps> = ({ providers, onChange }) => 
             index={i}
             onUpdate={(np) => updateAt(i, np)}
             onRemove={() => removeAt(i)}
+			onIflowOAuth={onIflowOAuth}
+			onIflowClearAuth={onIflowClearAuth}
+			iflowStatus={iflowStatus}
           />
         ))}
       </div>

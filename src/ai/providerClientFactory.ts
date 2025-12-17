@@ -5,14 +5,16 @@ import { OpenAIProviderClient } from "./providers/openai";
 import { OpenAICompatibleProviderClient } from "./providers/openai-compatible";
 import { GoogleProviderClient } from "./providers/google";
 import { ClaudeCodeProviderClient } from "./providers/claude-code";
+import { IFlowProviderClient } from "./providers/iflow";
 import { logger } from "../outputLogger";
 import { DeepSeekProviderClient } from "./providers/deepseek";
+import * as vscode from "vscode";
 
 
 export class ProviderClientFactory {
   private static instances: Map<string, ProviderClient> = new Map();
 
-  static getClient(providerModelConfig: ProviderModelConfig): ProviderClient {
+	static getClient(providerModelConfig: ProviderModelConfig, secrets: vscode.SecretStorage): ProviderClient {
 	const key = `${providerModelConfig.providerConfig.vercelType}-${providerModelConfig.providerConfig.id}`;
 
 	if (this.instances.has(key)) {
@@ -39,6 +41,9 @@ export class ProviderClientFactory {
 		break;
 	  case 'deepseek':
 		client = new DeepSeekProviderClient(providerModelConfig.providerConfig, providerModelConfig.apiKey);
+		break;
+	  case 'iflow':
+		client = new IFlowProviderClient(providerModelConfig.providerConfig, providerModelConfig.apiKey, secrets);
 		break;
 	  default:
 		logger.error(`Unsupported provider type: ${providerModelConfig.providerConfig.vercelType}`);

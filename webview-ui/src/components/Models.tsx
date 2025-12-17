@@ -22,6 +22,7 @@ export interface ModelsProps {
     providers: ProviderConfig[];
     models: ModelItem[];
     onChange: (models: ModelItem[]) => void;
+	onValidateProvider: (provider: ProviderConfig, model: ModelItem) => void;
 }
 
 const ModelItemCard: React.FC<{
@@ -30,7 +31,8 @@ const ModelItemCard: React.FC<{
     providers: ProviderConfig[];
     onUpdate: (next: ModelItem) => void;
     onRemove: () => void;
-}> = ({ value, index, providers, onUpdate, onRemove }) => {
+    onValidateProvider: (provider: ProviderConfig, model: ModelItem) => void;
+}> = ({ value, index, providers, onUpdate, onRemove, onValidateProvider }) => {
     const { t } = useTranslation();
     const updateField = (field: keyof ModelItem | keyof ModelProperties, v: any) => {
         const next: any = { ...value };
@@ -121,6 +123,20 @@ const ModelItemCard: React.FC<{
                                 </VscodeSingleSelect>
                                 <VscodeFormHelper>{t('models.providerDescription')}</VscodeFormHelper>
                             </div>
+                            {(() => {
+                                const selected = providers.find((p) => p.id === value?.provider);
+                                if (!selected || selected.vercelType !== 'iflow') {
+                                    return null;
+                                }
+                                return (
+                                    <div className="form-field">
+									<VscodeButton onClick={() => onValidateProvider(selected, value)} secondary>
+                                            {t('models.validateProvider')}
+                                        </VscodeButton>
+                                        <VscodeFormHelper>{t('models.validateProviderDescription')}</VscodeFormHelper>
+                                    </div>
+                                );
+                            })()}
                             <div className="form-field">
                                 <VscodeCheckbox
                                     checked={value?.use_for_autocomplete ?? false}
@@ -159,7 +175,7 @@ const ModelItemCard: React.FC<{
 };
 
 
-export const Models: React.FC<ModelsProps> = ({ providers, models, onChange }) => {
+export const Models: React.FC<ModelsProps> = ({ providers, models, onChange, onValidateProvider }) => {
     const { t } = useTranslation();
     const addModel = () => {
         const base: ModelItem = { id: '', slug: '', provider: '', model_properties: {}, model_parameters: {} };
@@ -201,6 +217,7 @@ export const Models: React.FC<ModelsProps> = ({ providers, models, onChange }) =
                         providers={providers}
                         onUpdate={(nm) => updateAt(i, nm)}
                         onRemove={() => removeAt(i)}
+						onValidateProvider={onValidateProvider}
                     />
                 ))}
             </div>

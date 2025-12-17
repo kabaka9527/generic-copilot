@@ -70,7 +70,7 @@ export async function updateContextStatusBar(
 	const progressBar = createProgressBar(tokens, maxTokens);
 	const displayText = `$(symbol-parameter) ${progressBar}`;
 	statusBarItem.text = displayText;
-	statusBarItem.tooltip = `Token Usage: ${tokens} / ${formatTokenCount(maxTokens)}\n\n${progressBar}\n\nClick to open configuration`;
+	statusBarItem.tooltip = vscode.l10n.t("statusBar.tooltip", tokens.toLocaleString(), formatTokenCount(maxTokens), progressBar);
 	// Add color coding based on token usage
 	const usagePercentage = (tokens / maxTokens) * 100;
 	if (usagePercentage > 90) {

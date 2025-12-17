@@ -97,7 +97,7 @@ export class ChatModelProvider implements LanguageModelChatProvider {
 			throw new Error(`Model "${model.id}" not found in configuration`);
 		}
 		const executionData = await getExecutionDataForModel(model, this.secrets);
-		const client = ProviderClientFactory.getClient(executionData);
+		const client = ProviderClientFactory.getClient(executionData, this.secrets);
 
 		logger.debug(`Providing language model chat response for model "${model.id}" with provider "${modelItem.provider}"`);
 

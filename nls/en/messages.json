@@ -1,0 +1,90 @@
+{
+  "generic-copilot.openConfiguration": "GenericCopilot: Open Configuration GUI",
+  "generic-copilot.setProviderApikey": "GenericCopilot: Set provider API key",
+  "generic-copilot.refresh": "GenericCopilot: Refresh model configs",
+  "generic-copilot.consoleView.title": "LLM Console",
+  "generic-copilot.modelManagement.title": "Model Management",
+
+  "error.noProvidersFound": "No providers found in generic-copilot.models or generic-copilot.providers. Please configure providers/models first.",
+
+  "dialog.selectProvider": "Select provider",
+  "dialog.selectProvider.placeHolder": "Choose a provider to configure API key",
+  "dialog.providerApiKey.title": "Provider API key - {provider}",
+  "dialog.providerApiKey.updatePrompt": "Update API key for {provider}",
+  "dialog.providerApiKey.enterPrompt": "Enter API key for {provider}",
+  "dialog.apiKeyClear.success": "Cleared API key for {provider}.",
+  "dialog.apiKeySave.success": "Saved API key for {provider}.",
+
+  "button.configuration": "Configure",
+  "button.save": "Save",
+  "button.cancel": "Cancel",
+
+  "message.modelConfigurationsRefreshed": "GenericCopilot model configurations refreshed.",
+  "message.failedToRefreshModels": "Failed to refresh GenericCopilot models: {error}",
+
+  "message.iflowOAuthRequired": "Detected iFlow provider: this provider requires OAuth login.",
+  "action.startOAuth": "Start OAuth login",
+  "action.openConfig": "Open configuration",
+  "message.iflowOAuthSuccess": "iFlow OAuth login succeeded (provider: {0}).",
+  "message.iflowOAuthProviderMissing": "Cannot start iFlow OAuth: missing provider config (select/save a provider first).",
+
+  "message.validateProviderMissing": "Cannot validate: missing provider configuration.",
+  "message.validateProviderUnsupported": "Validation currently supports iFlow provider only.",
+  "message.iflowApiKeyMissing": "iFlow API key not found. Please complete OAuth login first.",
+  "message.validateProviderSuccess": "Provider validation succeeded: {0}",
+  "message.validateProviderFailed": "Provider validation failed: {0}",
+
+  "statusBar.ready": "$(symbol-numeric) Ready",
+  "statusBar.tokenCount": "Current model token usage - click to open configuration",
+
+  "console.clear": "Clear",
+  "console.export": "Export",
+
+  "configuration.title": "Generic Compatible Copilot",
+  "configuration.providers": {
+    "description": "A list of providers. Models can reference providers to inherit baseUrl. Use the Configuration GUI or edit settings.json.",
+    "properties": {
+      "id": "Canonical provider ID (lowercase, used as owned_by and for API key storage).",
+      "displayName": "(Optional) Display name for the provider.",
+      "baseUrl": "(Optional) Base URL for the provider API endpoint. Override built-in defaults.",
+      "headers": "(Optional) Custom HTTP headers for this provider.",
+      "vercelType": "(Required) The Vercel provider type.",
+      "providerSpecificOptions": "(Optional) Provider-specific options as JSON."
+    }
+  },
+  "configuration.models": {
+    "description": "A list of models. Use the Configuration GUI or edit settings.json.",
+    "properties": {
+      "id": "Model ID (e.g., 'glm-4.6').",
+      "slug": "(Required) Slug sent to provider (e.g., 'gpt-4o', 'claude-3').",
+      "provider": "(Required) Provider ID reference. Allows inheriting API key, baseURL and headers.",
+      "displayName": "(Optional) Display name for the model.",
+      "use_for_autocomplete": "(Optional) Use this model for autocomplete.",
+      "retries": "(Optional) Retry count for failed requests (default 3).",
+      "model_properties": {
+        "description": "(Optional) Model properties including context_length, family, owned_by, etc.",
+        "properties": {
+          "context_length": "Model supported context length (default 128000).",
+          "owned_by": "(Optional) Model provider (e.g., 'openai').",
+          "family": "(Optional) Model family (e.g., 'gpt-4', 'claude-3', 'gemini')."
+        }
+      },
+      "model_parameters": {
+        "description": "(Optional) Model parameters including temperature and extra request parameters.",
+        "properties": {
+          "temperature": "Sampling temperature (0-2, default 1).",
+          "extra": "Extra request parameters used in /chat/completions."
+        }
+      }
+    }
+  },
+
+  "configuration.delay": "Fixed delay in milliseconds between consecutive requests (default 0).",
+  "configuration.enableExperimentalFeatures": "Enable experimental features.",
+
+  "configuration.logLevel": "Set extension log level.",
+  "configuration.logLevel.error": "Errors only",
+  "configuration.logLevel.warn": "Warnings and errors",
+  "configuration.logLevel.info": "Info, warnings, and errors",
+  "configuration.logLevel.debug": "All logs including debug"
+}

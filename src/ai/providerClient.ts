@@ -53,6 +53,12 @@ export abstract class ProviderClient {
 	}
 
 	/**
+	 * Initiates OAuth flow for providers that require it.
+	 * @returns A promise that resolves when the OAuth flow is complete.
+	 */
+	async initiateOAuth?(): Promise<void>;
+
+	/**
 	 * Generates a streaming response from the language model.
 	 * @param request The chat request messages.
 	 * @param options Options for providing the chat response.
@@ -108,6 +114,11 @@ export abstract class ProviderClient {
 					providerOptions: providerOptions || {},
 					onError: ({ error }) => {
 						logger.error(`Error during streaming response: ${error instanceof Error ? error.message : String(error)}`);
+						if (error instanceof Error && error.stack) {
+							logger.error(`Stack trace: ${error.stack}`);
+						}
+						// Log full error object for debugging
+						logger.error(`Full error object: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
 						streamError = error;
 					}
 				});
@@ -169,9 +180,17 @@ export abstract class ProviderClient {
 				logger.warn(
 					`Chat request failed (attempt ${attempt + 1}): ${error instanceof Error ? error.message : String(error)}`
 				);
+				if (error instanceof Error && error.stack) {
+					logger.warn(`Stack trace: ${error.stack}`);
+				}
+				logger.warn(`Full error object: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
 			}
 		}
-		logger.error("Chat request failed after retries:", (lastError as Error).message);
+		logger.error("Chat request failed after retries:", (lastError as Error)?.message || String(lastError));
+		if (lastError instanceof Error && lastError.stack) {
+			logger.error(`Final error stack: ${lastError.stack}`);
+		}
+		logger.error(`Final error object: ${JSON.stringify(lastError, Object.getOwnPropertyNames(lastError), 2)}`);
 		vscode.window.showErrorMessage(
 			`Chat request failed after multiple attempts: ${lastError instanceof Error ? lastError.message : String(lastError)}`
 		);

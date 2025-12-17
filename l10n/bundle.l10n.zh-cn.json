@@ -1,0 +1,38 @@
+{
+  "configuration.title": "Generic兼容Copilot",
+
+  "error.noProvidersFound": "在generic-copilot.models或generic-copilot.providers配置中未找到提供商。请先配置提供商或模型。",
+
+  "dialog.selectProvider": "选择提供商",
+  "dialog.selectProvider.placeHolder": "选择一个提供商来配置API密钥",
+  "dialog.providerApiKey.title": "Generic兼容API密钥 - {0}",
+  "dialog.providerApiKey.updatePrompt": "更新{0}的API密钥",
+  "dialog.providerApiKey.enterPrompt": "输入{0}的API密钥",
+  "dialog.apiKeyClear.success": "已清除{0}的API密钥。",
+  "dialog.apiKeySave.success": "已保存{0}的API密钥。",
+
+  "message.modelConfigurationsRefreshed": "GenericCopilot模型配置已刷新。",
+  "message.failedToRefreshModels": "无法刷新GenericCopilot模型：{0}",
+
+  "message.iflowOAuthRequired": "检测到 iFlow 提供商：该提供商仅支持 OAuth 登录。",
+  "action.startOAuth": "开始 OAuth 登录",
+  "action.openConfig": "打开配置界面",
+  "message.iflowOAuthSuccess": "iFlow OAuth 登录成功（提供商：{0}）。",
+  "message.iflowOAuthProviderMissing": "无法开始 iFlow OAuth：缺少提供商配置（请先在配置界面选择/保存提供商）。",
+
+  "message.iflowClearAuthProviderMissing": "无法清除 iFlow 登录信息：缺少提供商配置。",
+  "message.iflowClearAuthSuccess": "已清除 iFlow 登录信息（提供商：{0}）。",
+  "message.iflowClearAuthFailed": "清除 iFlow 登录信息失败：{0}",
+
+  "message.validateProviderMissing": "无法验证：缺少提供商配置。",
+  "message.validateModelMissing": "无法验证：缺少模型配置（需要填写 slug）。",
+  "message.validateProviderUnsupported": "当前仅支持验证 iFlow 提供商配置。",
+  "message.iflowApiKeyMissing": "未找到 iFlow 的 API Key（请先完成 OAuth 登录）。",
+  "message.validateProviderSuccess": "提供商配置验证成功：{0}",
+  "message.validateProviderSuccessWithResponse": "提供商配置验证成功：{0}（模型：{1}）=> {2}",
+  "message.validateProviderFailed": "提供商配置验证失败：{0}",
+
+  "statusBar.ready": "$(symbol-numeric) 就绪",
+  "statusBar.tokenCount": "当前模型令牌使用情况 - 点击打开配置",
+  "statusBar.tooltip": "令牌使用量：{0} / {1}\n\n{2}\n\n点击打开配置"
+}

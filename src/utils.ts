@@ -66,25 +66,40 @@ export function convertLmModeltoModelItem(model: LanguageModelChatInformation): 
 	return resolvedModel;
 }
 
-async function ensureApiKey(provider: string, secrets: vscode.SecretStorage): Promise<string | undefined> {
+async function ensureApiKey(providerConfig: ProviderConfig, secrets: vscode.SecretStorage): Promise<string | undefined> {
 	// Provider-level keys only; no generic key fallback
-	const normalizedProvider = provider.toLowerCase();
+	const normalizedProvider = providerConfig.id.toLowerCase();
 	const providerKey = `generic-copilot.apiKey.${normalizedProvider}`;
 	let apiKey = await secrets.get(providerKey);
-	if (!apiKey) {
-		logger.warn(
-			`API key for provider "${normalizedProvider}" not found in secret storage; prompting user to enter it.`
+	if (apiKey) {
+		return apiKey;
+	}
+
+	if (providerConfig.vercelType === "iflow") {
+		const action = await vscode.window.showInformationMessage(
+			`iFlow 仅支持 OAuth 登录，未找到已保存的 API Key。`,
+			"开始 OAuth 登录"
 		);
-		const entered = await vscode.window.showInputBox({
-			title: `API key for ${normalizedProvider}`,
-			prompt: `Enter API key for ${normalizedProvider}`,
-			ignoreFocusOut: true,
-			password: true,
-		});
-		if (entered && entered.trim()) {
-			apiKey = entered.trim();
-			await secrets.store(providerKey, apiKey);
+		if (action === "开始 OAuth 登录") {
+			await vscode.commands.executeCommand("generic-copilot.initiateIFlowOAuth");
+			apiKey = await secrets.get(providerKey);
+			return apiKey || undefined;
 		}
+		return undefined;
+	}
+
+	logger.warn(
+		`API key for provider "${normalizedProvider}" not found in secret storage; prompting user to enter it.`
+	);
+	const entered = await vscode.window.showInputBox({
+		title: `API key for ${normalizedProvider}`,
+		prompt: `Enter API key for ${normalizedProvider}`,
+		ignoreFocusOut: true,
+		password: true,
+	});
+	if (entered && entered.trim()) {
+		apiKey = entered.trim();
+		await secrets.store(providerKey, apiKey);
 	}
 	return apiKey || undefined;
 }
@@ -118,11 +133,19 @@ export async function getExecutionDataForModel(
 		throw new Error(`Model "${modelInfo.id}" not found in configuration`);
 	}
 
-	// Get model properties
+	// Look up the provider configuration first (needed for OAuth-only providers like iFlow)
+	const config = vscode.workspace.getConfiguration();
+	const providers = config.get<ProviderConfig[]>("generic-copilot.providers", []);
 	const providerKey: string = modelItem.provider;
+	const provider = providers.find((p) => p.id === providerKey);
 
-	// Get API key for the model's provider
-	const modelApiKey = await ensureApiKey(providerKey, secrets);
+	if (!provider) {
+		logger.error(`Provider "${providerKey}" not found in configuration`);
+		throw new Error(`Provider "${providerKey}" not found in configuration`);
+	}
+
+	// Get API key for the provider (OAuth-only providers will guide user appropriately)
+	const modelApiKey = await ensureApiKey(provider, secrets);
 	if (!modelApiKey) {
 		logger.error(`API key for provider "${providerKey}" not found`);
 		throw new Error(
@@ -130,16 +153,6 @@ export async function getExecutionDataForModel(
 				? `API key for provider "${providerKey}" not found`
 				: "No provider specified for model; please set 'owned_by' and configure its API key"
 		);
-	}
-
-	// Look up the provider configuration to get baseUrl
-	const config = vscode.workspace.getConfiguration();
-	const providers = config.get<ProviderConfig[]>("generic-copilot.providers", []);
-	const provider = providers.find((p) => p.id === providerKey);
-
-	if (!provider) {
-		logger.error(`Provider "${providerKey}" not found in configuration`);
-		throw new Error(`Provider "${providerKey}" not found in configuration`);
 	}
 
 	const providerWithProcessedHeaders: ProviderConfig = {
